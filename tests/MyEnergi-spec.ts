@@ -10,9 +10,4 @@ describe("MyEnergi Tests", () => {
     const myenergi = new MyEnergi('test', 'pwd');
     expect(myenergi).to.be.instanceOf(MyEnergi);
   });
-  it("should get status data", async () => {
-    const myenergi = new MyEnergi('test', 'pwd');
-    const status = await myenergi.getStatus();
-    expect(myenergi).to.be.instanceOf(MyEnergi);
-  });
 });
