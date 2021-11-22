@@ -47,12 +47,17 @@ export class Digest {
         });
     }
 
-    private requestDigest(options: RequestOptions, data?: any): Promise<any> {
+    private requestDigest(options: RequestOptions, data?: any, retryCount: number = 0): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             let resData: string = '';
             const req = https.request(options, (res: any) => {
 
                 if (res.statusCode == 401) {
+                    if (retryCount > 1) {
+                        reject("Authentication failed");
+                        return;
+                    }
+                    retryCount++;
                     let cnonce = this.md5(String(new Date().getTime()));
                     let auth = res.headers["www-authenticate"];
                     let realm, nonce, qop;
@@ -85,7 +90,7 @@ export class Digest {
                         options.headers = {};
                     this._authorization = "Digest username=\"" + this._username + "\",realm=\"" + realm + "\",nonce=\"" + nonce + "\",uri=\"" + options.path + "\",cnonce=\"" + cnonce + "\",nc=00000001,algorithm=MD5,response=\"" + response + "\",qop=\"" + qop + "\"";
                     options.headers.Authorization = this._authorization;
-                    return this.requestDigest(options, data).then(value => {
+                    return this.requestDigest(options, data, retryCount).then(value => {
                         resolve(value);
                     }).catch(resaon => {
                         reject(resaon);
@@ -127,7 +132,7 @@ export class Digest {
             method: 'GET',
             headers: {
                 'Connection': 'Keep-Alive',
-                'Content-Type': 'text/plain',
+                'Content-Type': 'application/json',
                 'Host': uri.hostname as string,
                 'Authorization': this._authorization
             }

@@ -23,30 +23,28 @@ export class MyEnergi {
         zappi_mode_url: 'https://s18.myenergi.net/cgi-zappi-mode-Z'
         //https://s18.myenergi.net/cgi-jdayhour-Znnnnnnnn-YYYY-MM-DD
     }
-    private _client: any;
-    private _asn: any;
+
+    private _digest: Digest;
 
     constructor(username: string, password: string) {
         this._config.username = username;
         this._config.password = password;
+        this._digest = new Digest(this._config.username, this._config.password);
     }
 
     public async getStatus(): Promise<any> {
-        const digest = new Digest(this._config.username, this._config.password);
-        const data = await digest.get(this._config.status_url);
+        const data = await this._digest.get(this._config.status_url);
         return data;
     }
 
     public async getZappi(): Promise<any> {
-        const digest = new Digest(this._config.username, this._config.password);
-        const data = await digest.get(this._config.zappi_url);
+        const data = await this._digest.get(this._config.zappi_url);
         return data;
     }
 
     public async setZappiChargeMode(serialNo: string, chargeMode: ZappiChargeMode): Promise<any> {
-        const digest = new Digest(this._config.username, this._config.password);
         const url = `${this._config.zappi_mode_url}${serialNo}-${chargeMode}-0-0-0000`;
-        const data = await digest.get(url);
+        const data = await this._digest.get(url);
         return data;
     }
 
