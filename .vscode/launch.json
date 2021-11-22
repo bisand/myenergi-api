@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Example",
+      "name": "Debug",
       "type": "node",
       "request": "launch",
       "env": {
@@ -11,7 +11,7 @@
       "runtimeExecutable": "node",
       "runtimeArgs": ["--nolazy", "-r", "ts-node/register/transpile-only"],
 
-      "args": ["tests/run.ts", "--example", "hello"],
+      "args": ["tests/debug.ts", "", ""],
       
       "cwd": "${workspaceRoot}",
       "internalConsoleOptions": "openOnSessionStart",

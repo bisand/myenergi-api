@@ -11,5 +11,5 @@
     },
     "include": [
         "./src"
-, "tests/debug.ts"    ]
+    ]
 }

@@ -1,5 +1,16 @@
 import { Digest } from './Digest';
 
+export enum ZappiChargeMode {
+    Off = 4,
+    Fast = 1,
+    Eco = 2,
+    EcoPlus = 3
+}
+export enum ZappiBoostMode {
+    Fast = 0,
+    Eco = 1,
+    EcoPlus = 2
+}
 export class MyEnergi {
     private _config = {
         username: '',
@@ -8,7 +19,8 @@ export class MyEnergi {
         zappi_url: 'https://s18.myenergi.net/cgi-jstatus-Z',
         harvi_url: 'https://s18.myenergi.net/cgi-jstatus-H',
         status_url: 'https://s18.myenergi.net/cgi-jstatus-*',
-        dayhour_url: 'https://s18.myenergi.net/cgi-jdayhour-'
+        dayhour_url: 'https://s18.myenergi.net/cgi-jdayhour-',
+        zappi_mode_url: 'https://s18.myenergi.net/cgi-zappi-mode-Z'
         //https://s18.myenergi.net/cgi-jdayhour-Znnnnnnnn-YYYY-MM-DD
     }
     private _client: any;
@@ -24,4 +36,18 @@ export class MyEnergi {
         const data = await digest.get(this._config.status_url);
         return data;
     }
+
+    public async getZappi(): Promise<any> {
+        const digest = new Digest(this._config.username, this._config.password);
+        const data = await digest.get(this._config.zappi_url);
+        return data;
+    }
+
+    public async setZappiChargeMode(serialNo: string, chargeMode: ZappiChargeMode): Promise<any> {
+        const digest = new Digest(this._config.username, this._config.password);
+        const url = `${this._config.zappi_mode_url}${serialNo}-${chargeMode}-0-0-0000`;
+        const data = await digest.get(url);
+        return data;
+    }
+
 }

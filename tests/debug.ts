@@ -1,10 +1,18 @@
 import { exit } from 'process';
 import { MyEnergi } from '../src';
 import * as dotenv from 'dotenv';
+import { ZappiChargeMode } from '../src/MyEnergi';
 
 dotenv.config();
 const myenergi = new MyEnergi(process.env.USERNAME as string, process.env.PASSWORD as string);
 myenergi.getStatus().then(val => {
     console.log(val);
-    exit();
+    myenergi.getZappi().then(v => {
+        console.log(v);
+        const sno: string = JSON.parse(v).zappi[0].sno;
+        myenergi.setZappiChargeMode(sno, ZappiChargeMode.Fast).then(x => {
+            console.log(x);
+            exit();
+        });
+    });
 });
