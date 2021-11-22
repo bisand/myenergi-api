@@ -13,6 +13,15 @@ myenergi.getStatus().then(val => {
         myenergi.setZappiChargeMode(sno, ZappiChargeMode.Fast).then(x => {
             console.log(x);
             exit();
-        }).catch(err => { console.error(err); });
-    }).catch(err => { console.error(err); });
-}).catch(err => { console.error(err); }).finally(() => exit());
+        }).catch(err => {
+            console.error(err);
+            exit();
+        });
+    }).catch(err => {
+        console.error(err);
+        exit();
+    });
+}).catch(err => {
+    console.error(err);
+    exit();
+});
