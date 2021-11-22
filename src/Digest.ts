@@ -4,10 +4,10 @@ import * as url from "url";
 import { AuthDigest } from './AuthDigest';
 
 export class Digest {
-    private _authorization?: AuthDigest;
+    private _authDigest?: AuthDigest;
 
     constructor(username: string, password: string) {
-        this._authorization = new AuthDigest(username, password);
+        this._authDigest = new AuthDigest(username, password);
     }
 
     private request(options: RequestOptions, data?: any, retryCount: number = 0): Promise<any> {
@@ -15,7 +15,7 @@ export class Digest {
             let resData: string = '';
             if (!options.headers)
                 options.headers = {};
-            options.headers.Authorization = this._authorization?.getAuthorization(options.method as string, options.path as string);
+            options.headers.Authorization = this._authDigest?.getAuthorization(options.method as string, options.path as string);
             const req = https.request(options, (res: any) => {
 
                 if (res.statusCode == 401) {
@@ -24,11 +24,16 @@ export class Digest {
                         return;
                     }
                     retryCount++;
-                    let auth = res.headers["www-authenticate"];
-                    this._authorization?.init(auth);
+                    const wwwAuth = res.headers["www-authenticate"] as string;
+                    if(!wwwAuth.startsWith('Digest'))
+                    {
+                        reject('Unsupported authentication method. Supported authentication schemes: Digest');
+                        return;
+                    }
+                    this._authDigest?.init(wwwAuth);
                     if (!options.headers)
                         options.headers = {};
-                    options.headers.Authorization = this._authorization?.getAuthorization(options.method as string, options.path as string);
+                    options.headers.Authorization = this._authDigest?.getAuthorization(options.method as string, options.path as string);
                     return this.request(options, data, retryCount).then(value => {
                         resolve(value);
                     }).catch(resaon => {
@@ -72,6 +77,7 @@ export class Digest {
             headers: {
                 'Connection': 'Keep-Alive',
                 'Content-Type': 'application/json',
+                'Accept': 'application/json',
                 'Host': uri.hostname as string,
             }
         };

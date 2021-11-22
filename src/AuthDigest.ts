@@ -63,7 +63,6 @@ export class AuthDigest {
 
     public init(wwwAuthHeader: string) {
 
-        //let realm, nonce, qop, opaque;
         let authSplit = wwwAuthHeader.split(',') as string[];
 
         for (let item of authSplit) {
@@ -104,7 +103,7 @@ export class AuthDigest {
         let HA2 = this.md5(httpMethod + ":" + path);
         let response = this.md5(HA1 + ":" + this.nonce + ":" + nc + ":" + cnonce + ":" + this.qop + ":" + HA2);
 
-        let res = `Digest username="${this._username}",`;
+        let res = `Digest username="${this.username}",`;
         res += `realm="${this.realm}",`;
         res += `nonce="${this.nonce}",`;
         res += `uri="${path}",`;
