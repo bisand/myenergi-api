@@ -11,7 +11,11 @@
         "build": "tsc",
         "test": "env TS_NODE_PROJECT='tsconfig.testing.json' mocha -r ts-node/register tests/**/*-spec.ts",
         "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
-        "lint": "tslint -p tsconfig.json"
+        "lint": "tslint -p tsconfig.json",
+        "prepare": "tsc",
+        "preversion": "npm test",
+        "version": "",
+        "postversion": ""
     },
     "repository": {
         "type": "git",
