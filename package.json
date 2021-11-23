@@ -1,6 +1,6 @@
 {
     "name": "myenergi-api",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "description": "NodeJS implementation of MyEnergi API for controlling Zappi, Eddi and other MyEnergi products",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
