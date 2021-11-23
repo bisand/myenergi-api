@@ -1,6 +1,6 @@
 import * as https from 'https';
 import { RequestOptions } from 'https';
-import * as url from "url";
+import * as url from 'url';
 import { AuthDigest } from './AuthDigest';
 
 export class Digest {
@@ -15,31 +15,30 @@ export class Digest {
     private request(options: RequestOptions, data?: any, retryCount: number = 0): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             let resData: string = '';
-            if (!options.headers)
-                options.headers = {};
+            if (!options.headers) options.headers = {};
             options.headers.Authorization = this._authDigest?.getAuthorization(options.method as string, options.path as string);
             const req = https.request(options, (res: any) => {
-
                 if (res.statusCode == 401) {
                     if (retryCount > 1) {
-                        reject("Authentication failed");
+                        reject('Authentication failed');
                         return;
                     }
                     retryCount++;
-                    const wwwAuth = res.headers["www-authenticate"] as string;
+                    const wwwAuth = res.headers['www-authenticate'] as string;
                     if (!wwwAuth.startsWith('Digest')) {
                         reject('Unsupported authentication method. Supported authentication schemes: Digest');
                         return;
                     }
                     this._authDigest?.init(wwwAuth);
-                    if (!options.headers)
-                        options.headers = {};
+                    if (!options.headers) options.headers = {};
                     options.headers.Authorization = this._authDigest?.getAuthorization(options.method as string, options.path as string);
-                    return this.request(options, data, retryCount).then(value => {
-                        resolve(value);
-                    }).catch(resaon => {
-                        reject(resaon);
-                    });
+                    return this.request(options, data, retryCount)
+                        .then((value) => {
+                            resolve(value);
+                        })
+                        .catch((resaon) => {
+                            reject(resaon);
+                        });
                 } else if (res.statusCode >= 200 && res.statusCode < 300) {
                     res.setEncoding('utf8');
                     res.on('data', (chunk: string) => {
@@ -49,8 +48,8 @@ export class Digest {
                         resolve(resData);
                     });
                 } else {
-                    console.error("status code failed!!");
-                    reject("status code failed!!");
+                    console.error('status code failed!!');
+                    reject('status code failed!!');
                     return;
                 }
             });
@@ -76,13 +75,12 @@ export class Digest {
             path: uri.pathname,
             method: 'GET',
             headers: {
-                'Connection': 'Keep-Alive',
+                Connection: 'Keep-Alive',
                 'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Host': uri.hostname as string,
-            }
+                Accept: 'application/json',
+                Host: uri.hostname as string,
+            },
         };
         return this.request(options, data);
     }
-
 }

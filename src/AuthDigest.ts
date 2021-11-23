@@ -40,7 +40,7 @@ export class AuthDigest {
     private _nc: number;
     public get nc(): string | undefined {
         this._nc++;
-        var myHex = ("0000000" + this._nc?.toString(16)).substr(-8);
+        var myHex = ('0000000' + this._nc?.toString(16)).substr(-8);
         return myHex;
     }
     private _cnonce?: string | undefined;
@@ -61,12 +61,10 @@ export class AuthDigest {
         this._nc = 0;
         this._initialized = false;
         this._algorithm = 'MD5';
-        if (errorHandler)
-            this._onError = errorHandler;
+        if (errorHandler) this._onError = errorHandler;
     }
 
     public init(wwwAuthHeader: string) {
-
         let authSplit = wwwAuthHeader.split(',') as string[];
 
         for (let item of authSplit) {
@@ -107,8 +105,7 @@ export class AuthDigest {
     }
 
     public getAuthorization(httpMethod: string, path: string): string {
-        if (!this._initialized)
-            return '';
+        if (!this._initialized) return '';
 
         const nc = this.nc;
         const cnonce = this.cnonce;

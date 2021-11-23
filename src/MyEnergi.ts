@@ -5,13 +5,13 @@ export enum ZappiChargeMode {
     Off = 4,
     Fast = 1,
     Eco = 2,
-    EcoPlus = 3
+    EcoPlus = 3,
 }
 
 export enum ZappiBoostMode {
     Manual = 10,
     Smart = 11,
-    Stop = 2
+    Stop = 2,
 }
 
 export class MyEnergi {
@@ -24,9 +24,9 @@ export class MyEnergi {
         status_url: 'https://s18.myenergi.net/cgi-jstatus-*',
         dayhour_url: 'https://s18.myenergi.net/cgi-jdayhour-',
         zappi_mode_url: 'https://s18.myenergi.net/cgi-zappi-mode-Z',
-        zappi_min_green_url: 'https://s18.myenergi.net/cgi-set-min-green-Z'
+        zappi_min_green_url: 'https://s18.myenergi.net/cgi-set-min-green-Z',
         //https://s18.myenergi.net/cgi-jdayhour-Znnnnnnnn-YYYY-MM-DD
-    }
+    };
 
     private _digest: Digest;
 
@@ -44,26 +44,20 @@ export class MyEnergi {
     public async getStatusZappiAll(): Promise<Zappi[]> {
         const data = await this._digest.get(this._config.zappi_url);
         const jsonData = JSON.parse(data);
-        if (jsonData.zappi)
-            return Object.assign<Zappi[], any>([] as Zappi[], jsonData.zappi);
-        else
-            return [] as Zappi[];
+        if (jsonData.zappi) return Object.assign<Zappi[], any>([] as Zappi[], jsonData.zappi);
+        else return [] as Zappi[];
     }
 
     public async getStatusZappi(serialNumber: string): Promise<Zappi | null> {
         const data = await this._digest.get(this._config.zappi_url);
         const jsonData = JSON.parse(data);
         if (jsonData.zappi) {
-            const zappi = (Object.assign<Zappi[], any>([] as Zappi[], jsonData.zappi) as Zappi[]).find(zappi => {
+            const zappi = (Object.assign<Zappi[], any>([] as Zappi[], jsonData.zappi) as Zappi[]).find((zappi) => {
                 return zappi.sno === serialNumber;
             });
-            if (zappi)
-                return Object.assign<Zappi, any>({} as Zappi, zappi);
-            else
-                return null;
-        }
-        else
-            return null;
+            if (zappi) return Object.assign<Zappi, any>({} as Zappi, zappi);
+            else return null;
+        } else return null;
     }
 
     public async setZappiChargeMode(serialNo: string, chargeMode: ZappiChargeMode): Promise<any> {
@@ -87,5 +81,4 @@ export class MyEnergi {
         const data = await this._digest.get(url);
         return data;
     }
-
 }
