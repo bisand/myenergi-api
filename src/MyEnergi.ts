@@ -1,4 +1,5 @@
 import { Digest } from './Digest';
+import { Zappi } from './models/Zappi';
 
 export enum ZappiChargeMode {
     Off = 4,
@@ -35,14 +36,18 @@ export class MyEnergi {
         this._digest = new Digest(this._config.username, this._config.password);
     }
 
-    public async getStatus(): Promise<any> {
+    public async getStatusAll(): Promise<any> {
         const data = await this._digest.get(this._config.status_url);
         return data;
     }
 
-    public async getZappi(): Promise<any> {
+    public async getStatusZappi(): Promise<Zappi[]> {
         const data = await this._digest.get(this._config.zappi_url);
-        return data;
+        const jsonData = JSON.parse(data);
+        if (jsonData.zappi)
+            return Object.assign<Zappi[], any>([] as Zappi[], jsonData.zappi);
+        else
+            return [] as Zappi[];
     }
 
     public async setZappiChargeMode(serialNo: string, chargeMode: ZappiChargeMode): Promise<any> {
