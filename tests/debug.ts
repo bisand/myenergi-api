@@ -7,7 +7,7 @@ dotenv.config();
 const myenergi = new MyEnergi(process.env.USERNAME as string, process.env.PASSWORD as string);
 myenergi.getStatusAll().then(val => {
     console.log(val);
-    myenergi.getStatusZappi().then(v => {
+    myenergi.getStatusZappiAll().then(v => {
         console.log(v);
         const sno: string = v[0].sno;
         myenergi.setZappiChargeMode(sno, ZappiChargeMode.Fast).then(x => {
@@ -16,7 +16,13 @@ myenergi.getStatusAll().then(val => {
                 console.log(x);
                 myenergi.setZappiGreenLevel(sno, 0).then(x => {
                     console.log(x);
-                    exit();
+                    myenergi.getStatusZappi(sno).then(x => {
+                        console.log(x);
+                        exit();
+                    }).catch(err => {
+                        console.error(err);
+                        exit();
+                    });
                 }).catch(err => {
                     console.error(err);
                     exit();

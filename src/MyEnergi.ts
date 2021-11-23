@@ -41,13 +41,29 @@ export class MyEnergi {
         return data;
     }
 
-    public async getStatusZappi(): Promise<Zappi[]> {
+    public async getStatusZappiAll(): Promise<Zappi[]> {
         const data = await this._digest.get(this._config.zappi_url);
         const jsonData = JSON.parse(data);
         if (jsonData.zappi)
             return Object.assign<Zappi[], any>([] as Zappi[], jsonData.zappi);
         else
             return [] as Zappi[];
+    }
+
+    public async getStatusZappi(serialNumber: string): Promise<Zappi | null> {
+        const data = await this._digest.get(this._config.zappi_url);
+        const jsonData = JSON.parse(data);
+        if (jsonData.zappi) {
+            const zappi = (Object.assign<Zappi[], any>([] as Zappi[], jsonData.zappi) as Zappi[]).find(zappi => {
+                return zappi.sno === serialNumber;
+            });
+            if (zappi)
+                return Object.assign<Zappi, any>({} as Zappi, zappi);
+            else
+                return null;
+        }
+        else
+            return null;
     }
 
     public async setZappiChargeMode(serialNo: string, chargeMode: ZappiChargeMode): Promise<any> {
