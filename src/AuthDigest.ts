@@ -4,6 +4,7 @@ export class AuthDigest {
     private _password?: string | undefined;
     private _username?: string | undefined;
     private _initialized: boolean;
+    private _onError?: (errorMessage: string) => void;
 
     public get username(): string | undefined {
         return this._username;
@@ -20,8 +21,8 @@ export class AuthDigest {
     public get uri(): string | undefined {
         return this._uri;
     }
-    private _algorithm?: string | undefined;
-    public get algorithm(): string | undefined {
+    private _algorithm: string;
+    public get algorithm(): string {
         return this._algorithm;
     }
     private _response?: string | undefined;
@@ -54,11 +55,14 @@ export class AuthDigest {
         return result;
     }
 
-    constructor(username: string, password: string) {
+    constructor(username: string, password: string, errorHandler?: (errorMessage: string) => void) {
         this._username = username;
         this._password = password;
         this._nc = 0;
         this._initialized = false;
+        this._algorithm = 'MD5';
+        if (errorHandler)
+            this._onError = errorHandler;
     }
 
     public init(wwwAuthHeader: string) {
@@ -89,19 +93,28 @@ export class AuthDigest {
                 this._opaque = opaqueSplit[opaqueSplit.length - 1];
                 this._opaque = this._opaque.substring(0, this._opaque.length - 1);
             }
+
+            if (item.indexOf('algorithm=') >= 0) {
+                let algorithmSplit = item.split('=');
+                this._algorithm = algorithmSplit[algorithmSplit.length - 1];
+                this._algorithm = this._algorithm.substring(0, this._algorithm.length);
+                if (this._onError && this.algorithm !== 'MD5') {
+                    this._onError(`Algorithm ${this.algorithm} is ont supported. Only MD5 is supportet`);
+                }
+            }
         }
         this._initialized = true;
     }
 
     public getAuthorization(httpMethod: string, path: string): string {
-        if(!this._initialized)
+        if (!this._initialized)
             return '';
 
         const nc = this.nc;
         const cnonce = this.cnonce;
-        let HA1 = this.md5(this.username + ":" + this.realm + ":" + this._password);
-        let HA2 = this.md5(httpMethod + ":" + path);
-        let response = this.md5(HA1 + ":" + this.nonce + ":" + nc + ":" + cnonce + ":" + this.qop + ":" + HA2);
+        let HA1 = this.md5(this.username + ':' + this.realm + ':' + this._password);
+        let HA2 = this.md5(httpMethod + ':' + path);
+        let response = this.md5(HA1 + ':' + this.nonce + ':' + nc + ':' + cnonce + ':' + this.qop + ':' + HA2);
 
         let res = `Digest username="${this.username}",`;
         res += `realm="${this.realm}",`;
@@ -109,7 +122,7 @@ export class AuthDigest {
         res += `uri="${path}",`;
         res += `cnonce="${cnonce}",`;
         res += `nc=${nc},`;
-        res += `algorithm=MD5,`;
+        res += `algorithm=${this.algorithm},`;
         res += `response="${response}",`;
         res += `qop="${this.qop}",`;
         res += `opaque="${this.opaque}"`;

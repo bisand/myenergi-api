@@ -7,7 +7,9 @@ export class Digest {
     private _authDigest?: AuthDigest;
 
     constructor(username: string, password: string) {
-        this._authDigest = new AuthDigest(username, password);
+        this._authDigest = new AuthDigest(username, password, (err) => {
+            console.error(err);
+        });
     }
 
     private request(options: RequestOptions, data?: any, retryCount: number = 0): Promise<any> {
@@ -25,8 +27,7 @@ export class Digest {
                     }
                     retryCount++;
                     const wwwAuth = res.headers["www-authenticate"] as string;
-                    if(!wwwAuth.startsWith('Digest'))
-                    {
+                    if (!wwwAuth.startsWith('Digest')) {
                         reject('Unsupported authentication method. Supported authentication schemes: Digest');
                         return;
                     }
