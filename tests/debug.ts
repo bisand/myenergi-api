@@ -2,44 +2,28 @@ import { exit } from 'process';
 import { MyEnergi } from '../src';
 import * as dotenv from 'dotenv';
 import { ZappiBoostMode, ZappiChargeMode } from '../src/MyEnergi';
+import { Zappi } from '../src/models/Zappi';
 
 dotenv.config();
-const myenergi = new MyEnergi(process.env.USERNAME as string, process.env.PASSWORD as string);
-myenergi.getStatusAll().then(val => {
-    console.log(val);
-    myenergi.getStatusZappiAll().then(v => {
-        console.log(v);
-        const sno: string = v[0].sno;
-        myenergi.setZappiChargeMode(sno, ZappiChargeMode.Fast).then(x => {
-            console.log(x);
-            myenergi.setZappiBoostMode(sno, ZappiBoostMode.Stop).then(x => {
-                console.log(x);
-                myenergi.setZappiGreenLevel(sno, 0).then(x => {
-                    console.log(x);
-                    myenergi.getStatusZappi(sno).then(x => {
-                        console.log(x);
-                        exit();
-                    }).catch(err => {
-                        console.error(err);
-                        exit();
-                    });
-                }).catch(err => {
-                    console.error(err);
-                    exit();
-                });
-            }).catch(err => {
-                console.error(err);
-                exit();
-            });
-        }).catch(err => {
-            console.error(err);
-            exit();
-        });
-    }).catch(err => {
-        console.error(err);
-        exit();
-    });
-}).catch(err => {
-    console.error(err);
+
+const runner = new Promise<Zappi>(async (resolve, reject) => {
+    const myenergi = new MyEnergi(process.env.USERNAME as string, process.env.PASSWORD as string);
+    const statusAll = await myenergi.getStatusAll()
+    console.log(statusAll);
+    const zappiAll = await myenergi.getStatusZappiAll();
+    console.log(zappiAll);
+    const sno: string = zappiAll[0].sno;
+    const chargeMode = await myenergi.setZappiChargeMode(sno, ZappiChargeMode.Fast);
+    console.log(chargeMode);
+    const boostMode = await myenergi.setZappiBoostMode(sno, ZappiBoostMode.Stop);
+    console.log(boostMode);
+    const greenLevel = await myenergi.setZappiGreenLevel(sno, 0);
+    console.log(greenLevel);
+    const statusZappi = await myenergi.getStatusZappi(sno);
+    resolve(statusZappi);
+});
+
+runner.then(x => {
+    console.log(x);
     exit();
 });
