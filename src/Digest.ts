@@ -5,14 +5,16 @@ import { AuthDigest } from './AuthDigest';
 
 export class Digest {
     private _authDigest?: AuthDigest;
+    private _baseUrl: url.Url;
 
-    constructor(username: string, password: string) {
+    constructor(baseUrl: string, username: string, password: string) {
+        this._baseUrl = url.parse(baseUrl, true);
         this._authDigest = new AuthDigest(username, password, (err) => {
             console.error(err);
         });
     }
 
-    private request(options: RequestOptions, data?: any, retryCount: number = 0): Promise<any> {
+    private request(options: RequestOptions, data?: any, retryCount: number = 0, redirectCount: number = 0): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             let resData: string = '';
             if (!options.headers) options.headers = {};
@@ -40,6 +42,27 @@ export class Digest {
                             reject(resaon);
                         });
                 } else if (res.statusCode >= 200 && res.statusCode < 300) {
+                    // myenergi asn redirect handler.
+                    const myenergiAsn = res.headers['x_myenergi-asn'];
+                    if (myenergiAsn && myenergiAsn !== 'undefined' && myenergiAsn !== this._baseUrl.host) {
+                        if (redirectCount > 2) {
+                            reject(`Too many redirects: ${myenergiAsn}`);
+                            return;
+                        }
+                        this._baseUrl.host = myenergiAsn;
+                        this._baseUrl.hostname = myenergiAsn;
+                        options.host = myenergiAsn;
+                        options.hostname = myenergiAsn;
+                        redirectCount++;
+                        return this.request(options, data, retryCount, redirectCount)
+                            .then((value) => {
+                                resolve(value);
+                            })
+                            .catch((resaon) => {
+                                reject(resaon);
+                            });
+                    }
+                    // Plain 200 handling
                     res.setEncoding('utf8');
                     res.on('data', (chunk: string) => {
                         resData += chunk;
@@ -47,6 +70,24 @@ export class Digest {
                     res.on('end', () => {
                         resolve(resData);
                     });
+                } else if (res.statusCode >= 300 && res.statusCode < 400) {
+                    if (redirectCount > 2) {
+                        reject(`Too many redirects: ${res.headers['location']}`);
+                        return;
+                    }
+                    const location = res.headers['location'] as string;
+                    const uri = url.parse(location, true);
+                    if (uri.host !== this._baseUrl.host) {
+                        this._baseUrl.host = uri.host;
+                    }
+                    redirectCount++;
+                    return this.request(options, data, retryCount, redirectCount)
+                        .then((value) => {
+                            resolve(value);
+                        })
+                        .catch((resaon) => {
+                            reject(resaon);
+                        });
                 } else {
                     console.error('status code failed!!');
                     reject('status code failed!!');
@@ -70,9 +111,10 @@ export class Digest {
     public get(requestUrl: string, data?: any): Promise<any> {
         const uri = url.parse(requestUrl, true);
         const options: RequestOptions = {
-            hostname: uri.hostname,
-            port: uri.port,
-            path: uri.pathname,
+            hostname: this._baseUrl.hostname,
+            host: this._baseUrl.host,
+            port: this._baseUrl.port,
+            path: uri.path,
             method: 'GET',
             headers: {
                 Connection: 'Keep-Alive',

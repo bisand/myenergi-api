@@ -18,13 +18,14 @@ export class MyEnergi {
     private _config = {
         username: '',
         password: '',
-        eddi_url: 'https://s18.myenergi.net/cgi-jstatus-E',
-        zappi_url: 'https://s18.myenergi.net/cgi-jstatus-Z',
-        harvi_url: 'https://s18.myenergi.net/cgi-jstatus-H',
-        status_url: 'https://s18.myenergi.net/cgi-jstatus-*',
-        dayhour_url: 'https://s18.myenergi.net/cgi-jdayhour-',
-        zappi_mode_url: 'https://s18.myenergi.net/cgi-zappi-mode-Z',
-        zappi_min_green_url: 'https://s18.myenergi.net/cgi-set-min-green-Z',
+        base_url: 'https://s18.myenergi.net',
+        eddi_url: '/cgi-jstatus-E',
+        zappi_url: '/cgi-jstatus-Z',
+        harvi_url: '/cgi-jstatus-H',
+        status_url: '/cgi-jstatus-*',
+        dayhour_url: '/cgi-jdayhour-',
+        zappi_mode_url: '/cgi-zappi-mode-Z',
+        zappi_min_green_url: '/cgi-set-min-green-Z',
         //https://s18.myenergi.net/cgi-jdayhour-Znnnnnnnn-YYYY-MM-DD
     };
 
@@ -33,12 +34,13 @@ export class MyEnergi {
     constructor(username: string, password: string) {
         this._config.username = username;
         this._config.password = password;
-        this._digest = new Digest(this._config.username, this._config.password);
+        this._digest = new Digest(this._config.base_url, this._config.username, this._config.password);
     }
 
     public async getStatusAll(): Promise<any> {
         const data = await this._digest.get(this._config.status_url);
-        return data;
+        const jsonData = JSON.parse(data);
+        return jsonData;
     }
 
     public async getStatusZappiAll(): Promise<Zappi[]> {
@@ -63,7 +65,8 @@ export class MyEnergi {
     public async setZappiChargeMode(serialNo: string, chargeMode: ZappiChargeMode): Promise<any> {
         const url = `${this._config.zappi_mode_url}${serialNo}-${chargeMode}-0-0-0000`;
         const data = await this._digest.get(url);
-        return data;
+        const jsonData = JSON.parse(data);
+        return jsonData;
     }
 
     public async setZappiBoostMode(serialNo: string, boostMode: ZappiBoostMode, kwh: number = 0, completeTime: string = '0000'): Promise<any> {
@@ -73,12 +76,14 @@ export class MyEnergi {
         }
         const url = `${this._config.zappi_mode_url}${serialNo}-0-${boostMode}-${kwh}-${completeTime}`;
         const data = await this._digest.get(url);
-        return data;
+        const jsonData = JSON.parse(data);
+        return jsonData;
     }
 
     public async setZappiGreenLevel(serialNo: string, percentage: number): Promise<any> {
         const url = `${this._config.zappi_min_green_url}${serialNo}-${percentage}`;
         const data = await this._digest.get(url);
-        return data;
+        const jsonData = JSON.parse(data);
+        return jsonData;
     }
 }
