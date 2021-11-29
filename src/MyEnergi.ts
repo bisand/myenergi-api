@@ -1,4 +1,5 @@
 import { Digest } from './Digest';
+import { Harvi } from './models/Harvi';
 import { Zappi } from './models/Zappi';
 
 export enum ZappiChargeMode {
@@ -85,5 +86,24 @@ export class MyEnergi {
         const data = await this._digest.get(url);
         const jsonData = JSON.parse(data);
         return jsonData;
+    }
+
+    public async getStatusHarviAll(): Promise<Harvi[]> {
+        const data = await this._digest.get(this._config.harvi_url);
+        const jsonData = JSON.parse(data);
+        if (jsonData.harvi) return Object.assign<Harvi[], any>([] as Harvi[], jsonData.harvi);
+        else return [] as Harvi[];
+    }
+
+    public async getStatusHarvi(serialNumber: string): Promise<Harvi | null> {
+        const data = await this._digest.get(this._config.harvi_url);
+        const jsonData = JSON.parse(data);
+        if (jsonData.harvi) {
+            const harvi = (Object.assign<Harvi[], any>([] as Harvi[], jsonData.harvi) as Harvi[]).find((harvi) => {
+                return harvi.sno === serialNumber;
+            });
+            if (harvi) return Object.assign<Harvi, any>({} as Harvi, harvi);
+            else return null;
+        } else return null;
     }
 }
