@@ -1,8 +1,8 @@
 import { exit } from 'process';
 import { MyEnergi } from '../src';
 import * as dotenv from 'dotenv';
-import { ZappiBoostMode, ZappiChargeMode } from '../src/MyEnergi';
 import { Zappi } from '../src/models/Zappi';
+import { EddiBoost, EddiMode, ZappiBoostMode, ZappiChargeMode } from '../src/models/Types';
 
 dotenv.config();
 
@@ -31,10 +31,23 @@ const runner = new Promise<any>(async (resolve, reject) => {
     const harviAll = await myenergi.getStatusHarviAll();
     console.log(harviAll);
 
-    sno = harviAll[0].sno;
-    const statusHarvi = await myenergi.getStatusHarvi(sno);
-    console.log(statusHarvi);
+    if (harviAll[0]) {
+        sno = harviAll[0].sno;
+        const statusHarvi = await myenergi.getStatusHarvi(sno);
+        console.log(statusHarvi);
+    }
+    const eddiAll = await myenergi.getStatusEddiAll();
+    console.log(eddiAll);
 
+    if (eddiAll[0]) {
+        sno = eddiAll[0].sno;
+        const statusEddi = await myenergi.getStatusEddi(sno);
+        console.log(statusEddi);
+    }
+
+    // Just for testing. Not valid serial!
+    await myenergi.setEddiMode('10088888', EddiMode.On);
+    await myenergi.setEddiBoost('10088888', EddiBoost.ManualHeater1, 10);
     resolve('OK');
 });
 

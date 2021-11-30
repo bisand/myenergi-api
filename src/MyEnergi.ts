@@ -1,19 +1,8 @@
 import { Digest } from './Digest';
+import { Eddi } from './models/Eddi';
 import { Harvi } from './models/Harvi';
+import { EddiBoost, EddiMode, ZappiBoostMode, ZappiChargeMode } from './models/Types';
 import { Zappi } from './models/Zappi';
-
-export enum ZappiChargeMode {
-    Off = 4,
-    Fast = 1,
-    Eco = 2,
-    EcoPlus = 3,
-}
-
-export enum ZappiBoostMode {
-    Manual = 10,
-    Smart = 11,
-    Stop = 2,
-}
 
 export class MyEnergi {
     private _config = {
@@ -27,6 +16,8 @@ export class MyEnergi {
         dayhour_url: '/cgi-jdayhour-',
         zappi_mode_url: '/cgi-zappi-mode-Z',
         zappi_min_green_url: '/cgi-set-min-green-Z',
+        eddi_mode_url: '/cgi-eddi-mode-E',
+        eddi_boost_url: '/cgi-eddi-boost-E'
         //https://s18.myenergi.net/cgi-jdayhour-Znnnnnnnn-YYYY-MM-DD
     };
 
@@ -83,6 +74,39 @@ export class MyEnergi {
 
     public async setZappiGreenLevel(serialNo: string, percentage: number): Promise<any> {
         const url = `${this._config.zappi_min_green_url}${serialNo}-${percentage}`;
+        const data = await this._digest.get(url);
+        const jsonData = JSON.parse(data);
+        return jsonData;
+    }
+
+    public async getStatusEddiAll(): Promise<Eddi[]> {
+        const data = await this._digest.get(this._config.eddi_url);
+        const jsonData = JSON.parse(data);
+        if (jsonData.eddi) return Object.assign<Eddi[], any>([] as Eddi[], jsonData.eddi);
+        else return [] as Eddi[];
+    }
+
+    public async getStatusEddi(serialNumber: string): Promise<Eddi | null> {
+        const data = await this._digest.get(this._config.eddi_url);
+        const jsonData = JSON.parse(data);
+        if (jsonData.eddi) {
+            const eddi = (Object.assign<Eddi[], any>([] as Eddi[], jsonData.eddi) as Eddi[]).find((eddi) => {
+                return eddi.sno === serialNumber;
+            });
+            if (eddi) return Object.assign<Eddi, any>({} as Eddi, eddi);
+            else return null;
+        } else return null;
+    }
+
+    public async setEddiMode(serialNo: string, mode: EddiMode): Promise<any> {
+        const url = `${this._config.eddi_mode_url}${serialNo}-${mode}`;
+        const data = await this._digest.get(url);
+        const jsonData = JSON.parse(data);
+        return jsonData;
+    }
+
+    public async setEddiBoost(serialNo: string, boost: EddiBoost, minutes: number = 0): Promise<any> {
+        const url = `${this._config.eddi_boost_url}${serialNo}-${boost}-${minutes}`;
         const data = await this._digest.get(url);
         const jsonData = JSON.parse(data);
         return jsonData;
