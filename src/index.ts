@@ -1,6 +1,6 @@
 import { Eddi } from './models/Eddi';
 import { Harvi } from './models/Harvi';
-import { EddiBoost, EddiHeaterStatus, EddiMode, ZappiBoostMode, ZappiChargeMode } from './models/Types';
+import { EddiBoost, EddiHeaterStatus, EddiMode, ZappiBoostMode, ZappiChargeMode, ZappiStatus } from './models/Types';
 import { Zappi } from './models/Zappi';
 import { MyEnergi } from './MyEnergi';
 export {
@@ -12,5 +12,6 @@ export {
     EddiMode,
     EddiHeaterStatus,
     ZappiBoostMode,
-    ZappiChargeMode
+    ZappiChargeMode,
+    ZappiStatus
 };
