@@ -34,3 +34,12 @@ export enum ZappiChargeMode {
     Eco = 2,
     EcoPlus = 3,
 }
+
+export enum ZappiStatus {
+    EvDisconnected = 'A',
+    EvConnected = 'B1',
+    WaitingForEv = 'B2',
+    EvReadyToCharge = 'C1',
+    Charging = 'C2',
+    Fault = 'F',
+};
