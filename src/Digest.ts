@@ -1,7 +1,7 @@
-import * as https from 'https';
-import { RequestOptions } from 'https';
-import * as url from 'url';
-import { AuthDigest } from './AuthDigest';
+import * as https from "https";
+import { RequestOptions } from "https";
+import * as url from "url";
+import { AuthDigest } from "./AuthDigest";
 
 export class Digest {
     private _authDigest?: AuthDigest;
@@ -16,19 +16,19 @@ export class Digest {
 
     private request(options: RequestOptions, data?: any, retryCount: number = 0, redirectCount: number = 0): Promise<any> {
         return new Promise<any>((resolve, reject) => {
-            let resData: string = '';
+            let resData: string = "";
             if (!options.headers) options.headers = {};
             options.headers.Authorization = this._authDigest?.getAuthorization(options.method as string, options.path as string);
             const req = https.request(options, (res: any) => {
                 if (res.statusCode == 401) {
                     if (retryCount > 1) {
-                        reject('Authentication failed');
+                        reject("Authentication failed");
                         return;
                     }
                     retryCount++;
-                    const wwwAuth = res.headers['www-authenticate'] as string;
-                    if (!wwwAuth.startsWith('Digest')) {
-                        reject('Unsupported authentication method. Supported authentication schemes: Digest');
+                    const wwwAuth = res.headers["www-authenticate"] as string;
+                    if (!wwwAuth.startsWith("Digest")) {
+                        reject("Unsupported authentication method. Supported authentication schemes: Digest");
                         return;
                     }
                     this._authDigest?.init(wwwAuth);
@@ -43,8 +43,8 @@ export class Digest {
                         });
                 } else if (res.statusCode >= 200 && res.statusCode < 300) {
                     // myenergi asn redirect handler.
-                    const myenergiAsn = res.headers['x_myenergi-asn'];
-                    if (myenergiAsn && myenergiAsn !== 'undefined' && myenergiAsn !== this._baseUrl.host) {
+                    const myenergiAsn = res.headers["x_myenergi-asn"];
+                    if (myenergiAsn && myenergiAsn !== "undefined" && myenergiAsn !== this._baseUrl.host) {
                         if (redirectCount > 2) {
                             reject(`Too many redirects: ${myenergiAsn}`);
                             return;
@@ -63,19 +63,19 @@ export class Digest {
                             });
                     }
                     // Plain 200 handling
-                    res.setEncoding('utf8');
-                    res.on('data', (chunk: string) => {
+                    res.setEncoding("utf8");
+                    res.on("data", (chunk: string) => {
                         resData += chunk;
                     });
-                    res.on('end', () => {
+                    res.on("end", () => {
                         resolve(resData);
                     });
                 } else if (res.statusCode >= 300 && res.statusCode < 400) {
                     if (redirectCount > 2) {
-                        reject(`Too many redirects: ${res.headers['location']}`);
+                        reject(`Too many redirects: ${res.headers["location"]}`);
                         return;
                     }
-                    const location = res.headers['location'] as string;
+                    const location = res.headers["location"] as string;
                     const uri = url.parse(location, true);
                     if (uri.host !== this._baseUrl.host) {
                         this._baseUrl.host = uri.host;
@@ -89,13 +89,13 @@ export class Digest {
                             reject(resaon);
                         });
                 } else {
-                    console.error('status code failed!!');
-                    reject('status code failed!!');
+                    console.error("status code failed!!");
+                    reject("status code failed!!");
                     return;
                 }
             });
 
-            req.on('error', (e: any) => {
+            req.on("error", (e: any) => {
                 console.error(`problem with request: ${e.message}`);
                 reject(e);
             });
@@ -115,11 +115,11 @@ export class Digest {
             host: this._baseUrl.host,
             port: this._baseUrl.port,
             path: uri.path,
-            method: 'GET',
+            method: "GET",
             headers: {
-                Connection: 'Keep-Alive',
-                'Content-Type': 'application/json',
-                Accept: 'application/json',
+                Connection: "Keep-Alive",
+                "Content-Type": "application/json",
+                Accept: "application/json",
                 Host: uri.hostname as string,
             },
         };

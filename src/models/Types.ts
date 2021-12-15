@@ -1,12 +1,12 @@
 export enum EddiBoost {
-    CancelHeater1 = '1-1',
-    CancelHeater2 = '1-1',
-    CancelRelay1 = '1-11',
-    CancelRelay2 = '1-12',
-    ManualHeater1 = '10-1',
-    ManualHeater2 = '10-1',
-    ManualRelay1 = '10-11',
-    ManualRelay2 = '10-12',
+    CancelHeater1 = "1-1",
+    CancelHeater2 = "1-1",
+    CancelRelay1 = "1-11",
+    CancelRelay2 = "1-12",
+    ManualHeater1 = "10-1",
+    ManualHeater2 = "10-1",
+    ManualRelay1 = "10-11",
+    ManualRelay2 = "10-12",
 }
 
 export enum EddiHeaterStatus {
@@ -36,10 +36,10 @@ export enum ZappiChargeMode {
 }
 
 export enum ZappiStatus {
-    EvDisconnected = 'A',
-    EvConnected = 'B1',
-    WaitingForEv = 'B2',
-    EvReadyToCharge = 'C1',
-    Charging = 'C2',
-    Fault = 'F',
-};
+    EvDisconnected = "A",
+    EvConnected = "B1",
+    WaitingForEv = "B2",
+    EvReadyToCharge = "C1",
+    Charging = "C2",
+    Fault = "F",
+}

@@ -1,4 +1,4 @@
-import * as crypto from 'crypto';
+import * as crypto from "crypto";
 
 export class AuthDigest {
     private _password?: string | undefined;
@@ -40,7 +40,7 @@ export class AuthDigest {
     private _nc: number;
     public get nc(): string | undefined {
         this._nc++;
-        var myHex = ('0000000' + this._nc?.toString(16)).substr(-8);
+        var myHex = ("0000000" + this._nc?.toString(16)).substr(-8);
         return myHex;
     }
     private _cnonce?: string | undefined;
@@ -50,8 +50,8 @@ export class AuthDigest {
     }
 
     private md5(data: string) {
-        let md5 = crypto.createHash('md5');
-        let result = md5.update(data).digest('hex');
+        let md5 = crypto.createHash("md5");
+        let result = md5.update(data).digest("hex");
         return result;
     }
 
@@ -60,43 +60,43 @@ export class AuthDigest {
         this._password = password;
         this._nc = 0;
         this._initialized = false;
-        this._algorithm = 'MD5';
+        this._algorithm = "MD5";
         if (errorHandler) this._onError = errorHandler;
     }
 
     public init(wwwAuthHeader: string) {
-        let authSplit = wwwAuthHeader.split(',') as string[];
+        let authSplit = wwwAuthHeader.split(",") as string[];
 
         for (let item of authSplit) {
-            if (item.indexOf('realm=') >= 0) {
+            if (item.indexOf("realm=") >= 0) {
                 let realmSplit = item.split('="');
                 this._realm = realmSplit[realmSplit.length - 1];
                 this._realm = this._realm.substring(0, this._realm.length - 1);
             }
 
-            if (item.indexOf('nonce=') >= 0) {
+            if (item.indexOf("nonce=") >= 0) {
                 let nonceSplit = item.split('="');
                 this._nonce = nonceSplit[nonceSplit.length - 1];
                 this._nonce = this._nonce.substring(0, this._nonce.length - 1);
             }
 
-            if (item.indexOf('qop=') >= 0) {
+            if (item.indexOf("qop=") >= 0) {
                 let qopSplit = item.split('="');
                 this._qop = qopSplit[qopSplit.length - 1];
                 this._qop = this._qop.substring(0, this._qop.length - 1);
             }
 
-            if (item.indexOf('opaque=') >= 0) {
+            if (item.indexOf("opaque=") >= 0) {
                 let opaqueSplit = item.split('="');
                 this._opaque = opaqueSplit[opaqueSplit.length - 1];
                 this._opaque = this._opaque.substring(0, this._opaque.length - 1);
             }
 
-            if (item.indexOf('algorithm=') >= 0) {
-                let algorithmSplit = item.split('=');
+            if (item.indexOf("algorithm=") >= 0) {
+                let algorithmSplit = item.split("=");
                 this._algorithm = algorithmSplit[algorithmSplit.length - 1];
                 this._algorithm = this._algorithm.substring(0, this._algorithm.length);
-                if (this._onError && this.algorithm !== 'MD5') {
+                if (this._onError && this.algorithm !== "MD5") {
                     this._onError(`Algorithm ${this.algorithm} is ont supported. Only MD5 is supportet`);
                 }
             }
@@ -105,13 +105,13 @@ export class AuthDigest {
     }
 
     public getAuthorization(httpMethod: string, path: string): string {
-        if (!this._initialized) return '';
+        if (!this._initialized) return "";
 
         const nc = this.nc;
         const cnonce = this.cnonce;
-        let HA1 = this.md5(this.username + ':' + this.realm + ':' + this._password);
-        let HA2 = this.md5(httpMethod + ':' + path);
-        let response = this.md5(HA1 + ':' + this.nonce + ':' + nc + ':' + cnonce + ':' + this.qop + ':' + HA2);
+        let HA1 = this.md5(this.username + ":" + this.realm + ":" + this._password);
+        let HA2 = this.md5(httpMethod + ":" + path);
+        let response = this.md5(HA1 + ":" + this.nonce + ":" + nc + ":" + cnonce + ":" + this.qop + ":" + HA2);
 
         let res = `Digest username="${this.username}",`;
         res += `realm="${this.realm}",`;

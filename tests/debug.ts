@@ -1,15 +1,15 @@
-import { exit } from 'process';
-import { MyEnergi } from '../src';
-import * as dotenv from 'dotenv';
-import { Zappi } from '../src/models/Zappi';
-import { EddiBoost, EddiMode, ZappiBoostMode, ZappiChargeMode } from '../src/models/Types';
+import { exit } from "process";
+import { MyEnergi } from "../src";
+import * as dotenv from "dotenv";
+import { Zappi } from "../src/models/Zappi";
+import { EddiBoost, EddiMode, ZappiBoostMode, ZappiChargeMode } from "../src/models/Types";
 
 dotenv.config();
 
 const runner = new Promise<any>(async (resolve, reject) => {
     const myenergi = new MyEnergi(process.env.USERNAME as string, process.env.PASSWORD as string);
 
-    const statusAll = await myenergi.getStatusAll()
+    const statusAll = await myenergi.getStatusAll();
     console.log(statusAll);
 
     const zappiAll = await myenergi.getStatusZappiAll();
@@ -46,12 +46,12 @@ const runner = new Promise<any>(async (resolve, reject) => {
     }
 
     // Just for testing. Not valid serial!
-    await myenergi.setEddiMode('10088888', EddiMode.On);
-    await myenergi.setEddiBoost('10088888', EddiBoost.ManualHeater1, 10);
-    resolve('OK');
+    await myenergi.setEddiMode("10088888", EddiMode.On);
+    await myenergi.setEddiBoost("10088888", EddiBoost.ManualHeater1, 10);
+    resolve("OK");
 });
 
-runner.then(x => {
+runner.then((x) => {
     console.log(x);
     exit();
 });

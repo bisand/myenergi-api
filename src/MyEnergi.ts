@@ -1,23 +1,23 @@
-import { Digest } from './Digest';
-import { Eddi } from './models/Eddi';
-import { Harvi } from './models/Harvi';
-import { EddiBoost, EddiMode, ZappiBoostMode, ZappiChargeMode } from './models/Types';
-import { Zappi } from './models/Zappi';
+import { Digest } from "./Digest";
+import { Eddi } from "./models/Eddi";
+import { Harvi } from "./models/Harvi";
+import { EddiBoost, EddiMode, ZappiBoostMode, ZappiChargeMode } from "./models/Types";
+import { Zappi } from "./models/Zappi";
 
 export class MyEnergi {
     private _config = {
-        username: '',
-        password: '',
-        base_url: 'https://s18.myenergi.net',
-        eddi_url: '/cgi-jstatus-E',
-        zappi_url: '/cgi-jstatus-Z',
-        harvi_url: '/cgi-jstatus-H',
-        status_url: '/cgi-jstatus-*',
-        dayhour_url: '/cgi-jdayhour-',
-        zappi_mode_url: '/cgi-zappi-mode-Z',
-        zappi_min_green_url: '/cgi-set-min-green-Z',
-        eddi_mode_url: '/cgi-eddi-mode-E',
-        eddi_boost_url: '/cgi-eddi-boost-E'
+        username: "",
+        password: "",
+        base_url: "https://s18.myenergi.net",
+        eddi_url: "/cgi-jstatus-E",
+        zappi_url: "/cgi-jstatus-Z",
+        harvi_url: "/cgi-jstatus-H",
+        status_url: "/cgi-jstatus-*",
+        dayhour_url: "/cgi-jdayhour-",
+        zappi_mode_url: "/cgi-zappi-mode-Z",
+        zappi_min_green_url: "/cgi-set-min-green-Z",
+        eddi_mode_url: "/cgi-eddi-mode-E",
+        eddi_boost_url: "/cgi-eddi-boost-E",
         //https://s18.myenergi.net/cgi-jdayhour-Znnnnnnnn-YYYY-MM-DD
     };
 
@@ -61,10 +61,10 @@ export class MyEnergi {
         return jsonData;
     }
 
-    public async setZappiBoostMode(serialNo: string, boostMode: ZappiBoostMode, kwh: number = 0, completeTime: string = '0000'): Promise<any> {
+    public async setZappiBoostMode(serialNo: string, boostMode: ZappiBoostMode, kwh: number = 0, completeTime: string = "0000"): Promise<any> {
         if (boostMode === ZappiBoostMode.Stop) {
             kwh = 0;
-            completeTime = '0000';
+            completeTime = "0000";
         }
         const url = `${this._config.zappi_mode_url}${serialNo}-0-${boostMode}-${kwh}-${completeTime}`;
         const data = await this._digest.get(url);
