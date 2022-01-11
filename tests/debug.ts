@@ -1,7 +1,7 @@
 import { exit } from "process";
 import { MyEnergi } from "../src";
 import * as dotenv from "dotenv";
-import { Zappi } from "../src/models/Zappi";
+// import { Zappi } from "../src/models/Zappi";
 import { EddiBoost, EddiMode, ZappiBoostMode, ZappiChargeMode } from "../src/models/Types";
 
 dotenv.config();
