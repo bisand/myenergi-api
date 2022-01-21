@@ -16,6 +16,9 @@ const runner = new Promise<any>(async (resolve, reject) => {
     console.log(zappiAll);
 
     let sno: string = zappiAll[0].sno;
+    const zappi = await myenergi.getStatusZappi(sno);
+    console.log(zappi);
+
     const chargeMode = await myenergi.setZappiChargeMode(sno, ZappiChargeMode.Fast);
     console.log(chargeMode);
 
