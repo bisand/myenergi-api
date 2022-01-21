@@ -19,7 +19,7 @@ This node.js module is used for communicating with [myenergi](https://myenergi.c
 In order to use this module you have to own a myenergi [hub](https://myenergi.com/product/hub/). This will have to be registered to the [myenergi My Account](https://myaccount.myenergi.com/).
 The hubs serial is used for the username and the password is the password you created when registering the product on [myenergi My Account](https://myaccount.myenergi.com/location#devices).
 ## Installation
-> npm package [https://www.npmjs.com/package/myenergi.api](https://www.npmjs.com/package/myenergi.api)
+> npm package [https://www.npmjs.com/package/myenergi-api](https://www.npmjs.com/package/myenergi-api)
 ```
 npm install myenergi-api
 ```
