@@ -30,7 +30,7 @@ export interface Zappi {
     che: number; // Charge added in KWh
     lck: number; // Lock Status (4 bits : 1st digit - ? : 2nd digit - 1 unlocked, 0 locked)
     pst: string; // Status A=EV Disconnected, B1=EV Connected, B2=Waiting for EV, C1=EV Ready to Charge, C2= Charging, F= Fault
-    bsm: number;
+    bsm: number; // Boost Mode. 1=ON, 0=OFF. iF (tbh !== undefined && bsm === 1) MANUAL else SMART
     bst: number;
     bss: number;
     sbh: number; // Smart Boost Start Time Hour
