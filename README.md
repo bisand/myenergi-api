@@ -114,8 +114,8 @@ console.log(result);
 
 ## From myenergi documentation
 <a name="myenergi_documentation"></a>
-### Zappi charge modes.
 <a name="charge_mode"></a>
+### Zappi charge modes.
 zappi has four charge modes to help you charge your EV
 
 | Mode | Description |
@@ -125,8 +125,8 @@ zappi has four charge modes to help you charge your EV
 | ECO+ 	| Like ECO, zappi will control the power going to your EV to match the surplus generation. However, if the surplus power goes below 1.4kW then zappi will pause the charge so you are not taking power from the grid. (*** See MGL below ***) If you want to charge your car quickly (for instance to top up the battery with cheap overnight electricity) then use one of the boosts to charge it at full power |
 | STOP  | In STOP mode zappi will not charge your car Boosts are also blocked. |
 
-### Zappi boost modes.
 <a name="boost_mode"></a>
+### Zappi boost modes.
 In ECO and ECO+ you can use the boosts to top up your battery quickly.  There are three different boosts available
 | Mode | Description |
 |------|-------------|
@@ -134,8 +134,8 @@ In ECO and ECO+ you can use the boosts to top up your battery quickly.  There ar
 | Smart | With Smart Boost you tell zappi how much energy you want to add to your battery and the target time. Zappi will start a quick charge at full power to test the charge speed but then goes back to the normal operation for ECO and ECO+, matching the charge rate to your spare generation. A boost at full power will then take place to top up your battery to the target value by the time set. With Smart Boost your charge will be as green as possible whilst making sure your battery has the desired energy added to it |
 | Scheduled | With Scheduled Boost you can set up to four time periods when the zappi will charge your EV at full power. This is useful for charging your car when electricity is cheap, but we would recommend you use the “My Flexible Tariff” settings in the myenergi online account (myaccount.myenergi.com) so these are set for you automatically. |
 
-### Minimum Green Level (MGL)
 <a name="mgl"></a>
+### Minimum Green Level (MGL)
 Minimum Green Level allows you to decide how much grid power zappi uses to keep the 1.4kW minimum charge rate going.
 The feature only works in ECO+ and was introduced for those people who want to squeeze as much of their surplus generation into the EV battery.
 
