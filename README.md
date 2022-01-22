@@ -11,16 +11,79 @@
 NodeJS implementation of MyEnergi API for controlling Zappi, Eddi and other MyEnergi products
 
 ## General
+
 This node.js module is used for communicating with [myenergi](https://myenergi.com/) API. It enables you to communicate, retrieve data and control some of the myeneri products like [Zappi](https://myenergi.com/product/zappi/) and [Eddi](https://myenergi.com/product/eddi/).
 
 [Zappi](https://myenergi.com/product/zappi/) is a smart EV charger that is able to charge your EV using solar enegy or other renewable energy sources which saves energy and money. [Eddi](https://myenergi.com/product/eddi/) is a power diverter that controls up to two heating sources. It works in the same way as Zappi by diverting generated renewable enegy directly to the heating source and potentially draw the rest of the energy from the grid.
 
 ## Prerequisites
+
 In order to use this module you have to own a myenergi [hub](https://myenergi.com/product/hub/). This will have to be registered to the [myenergi My Account](https://myaccount.myenergi.com/).
 The hubs serial is used for the username and the password is the password you created when registering the product on [myenergi My Account](https://myaccount.myenergi.com/location#devices).
+
 ## Installation
+
 > npm package [https://www.npmjs.com/package/myenergi-api](https://www.npmjs.com/package/myenergi-api)
+
 ```
 npm install myenergi-api
 ```
+
 ## Usage
+
+### Create an instance of MyEnergi class.
+Here you find all methods needed to communicate with your myenergi hub. You will have to create one instance per hub if you have more than one.
+```typescript
+const myenergi = new MyEnergi("1234567", "!3uper3ecretPassw0rd");
+```
+
+### Get status of all myenergi devices
+Return status of all myenergi devices connected to the hub. Zappi, Eddi and Harvi
+```typescript
+const statusAll = await myenergi.getStatusAll();
+console.log(statusAll);
+```
+
+### Get status of all Zappi devices.
+Return status of all Zappi devices connected to the hub.
+```typescript
+const zappiAll: Zappi[] = await myenergi.getStatusZappiAll();
+console.log(zappiAll);
+```
+
+### Get status of one Zappi device.
+Return status of a Zappi device with the provided serial number.
+```typescript
+const sno = '1234567';
+const statusZappi: Zappi = await myenergi.getStatusZappi(sno);
+console.log(statusZappi);
+
+```
+
+### Set Zappi charge mode.
+Set the current charge mode for the specified Zappi device. You can also use this function to stop charging. See [ZappiChargeMode](#there_you_go) enum for more details.
+```typescript
+const sno = '1234567';
+const chargeMode = await myenergi.setZappiChargeMode(sno, ZappiChargeMode.EcoPlus);
+console.log(chargeMode);
+
+```
+
+<a name="there_you_go"></a>
+### Test
+
+```typescript
+
+```
+
+###
+
+```typescript
+
+```
+
+###
+
+```typescript
+
+```

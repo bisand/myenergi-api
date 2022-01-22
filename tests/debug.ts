@@ -1,8 +1,13 @@
 import { exit } from "process";
-import { MyEnergi } from "../src";
+import {
+    MyEnergi,
+    Zappi,
+    ZappiBoostMode,
+    ZappiChargeMode,
+    EddiBoost,
+    EddiMode,
+} from "../src";
 import * as dotenv from "dotenv";
-// import { Zappi } from "../src/models/Zappi";
-import { EddiBoost, EddiMode, ZappiBoostMode, ZappiChargeMode } from "../src/models/Types";
 
 dotenv.config();
 
@@ -12,30 +17,29 @@ const runner = new Promise<any>(async (resolve, reject) => {
     const statusAll = await myenergi.getStatusAll();
     console.log(statusAll);
 
-    const zappiAll = await myenergi.getStatusZappiAll();
+    const zappiAll: Zappi[] = await myenergi.getStatusZappiAll();
     console.log(zappiAll);
 
-    let sno: string = zappiAll[0].sno;
-    const zappi = await myenergi.getStatusZappi(sno);
-    console.log(zappi);
+    if (zappiAll[0]) {
+        let sno: string = zappiAll[0].sno;
+        const statusZappi: Zappi = await myenergi.getStatusZappi(sno);
+        console.log(statusZappi);
 
-    const chargeMode = await myenergi.setZappiChargeMode(sno, ZappiChargeMode.Fast);
-    console.log(chargeMode);
+        const chargeMode = await myenergi.setZappiChargeMode(sno, ZappiChargeMode.EcoPlus);
+        console.log(chargeMode);
 
-    const boostMode = await myenergi.setZappiBoostMode(sno, ZappiBoostMode.Stop);
-    console.log(boostMode);
+        const greenLevel = await myenergi.setZappiGreenLevel(sno, 75);
+        console.log(greenLevel);
 
-    const greenLevel = await myenergi.setZappiGreenLevel(sno, 0);
-    console.log(greenLevel);
-
-    const statusZappi = await myenergi.getStatusZappi(sno);
-    console.log(statusZappi);
+        const boostMode = await myenergi.setZappiBoostMode(sno, ZappiBoostMode.Smart, 22, '0615');
+        console.log(boostMode);
+    }
 
     const harviAll = await myenergi.getStatusHarviAll();
     console.log(harviAll);
 
     if (harviAll[0]) {
-        sno = harviAll[0].sno;
+        const sno = harviAll[0].sno;
         const statusHarvi = await myenergi.getStatusHarvi(sno);
         console.log(statusHarvi);
     }
@@ -43,7 +47,7 @@ const runner = new Promise<any>(async (resolve, reject) => {
     console.log(eddiAll);
 
     if (eddiAll[0]) {
-        sno = eddiAll[0].sno;
+        const sno = eddiAll[0].sno;
         const statusEddi = await myenergi.getStatusEddi(sno);
         console.log(statusEddi);
     }
