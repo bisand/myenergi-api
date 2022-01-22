@@ -61,29 +61,87 @@ console.log(statusZappi);
 ```
 
 ### Set Zappi charge mode.
-Set the current charge mode for the specified Zappi device. You can also use this function to stop charging. See [ZappiChargeMode](#there_you_go) enum for more details.
+Set the current charge mode for the specified Zappi device. You can also use this function to stop charging. See [Charge Mode](#charge_mode) in the documentation below for more details.
 ```typescript
 const sno = '1234567';
-const chargeMode = await myenergi.setZappiChargeMode(sno, ZappiChargeMode.EcoPlus);
-console.log(chargeMode);
+const chargeMode = ZappiChargeMode.EcoPlus;
+const result = await myenergi.setZappiChargeMode(sno, chargeMode);
+console.log(result);
 
 ```
 
-<a name="there_you_go"></a>
-### Test
-
+### Set Zappi minimum green level (MGL)
+Set minimum green level to decide how much grid power zappi uses to keep the 1.4kW minimum charge rate going. See [MGL](#mgl) in the documentation below for more details.
 ```typescript
-
+const result = await myenergi.setZappiGreenLevel(sno, 75);
+console.log(result);
 ```
 
-###
-
+### Set Zappi boost mode
+In ECO and ECO+ you can use the boosts to top up your battery quickly.  There are three different boosts available. See [Boost Mode](#boost_mode) in the documentation below for more details.
 ```typescript
-
+const result = await myenergi.setZappiBoostMode(sno, ZappiBoostMode.Smart, 22, '0615');
+console.log(result);
 ```
 
-###
-
+### Get status for all Harvi devices
+Return status of all Harvi devices connected to the hub.
 ```typescript
-
+const result = await myenergi.getStatusHarviAll();
+console.log(result);
 ```
+### Get status of a specific Harvi device
+Return status of a Harvi device with the provided serial number.
+```typescript
+const sno = '1234567';
+const result = await myenergi.getStatusHarvi(sno);
+console.log(result);
+```
+### Get status for all Eddi devices
+Return status of all Eddi devices connected to the hub.
+```typescript
+const result = await myenergi.getStatusEddiAll();
+console.log(result);
+```
+### Get status of a specific Eddi device
+Return status of a Eddi device with the provided serial number.
+```typescript
+const sno = '1234567';
+const result = await myenergi.getStatusEddi(sno);
+console.log(result);
+```
+
+
+## From myenergi documentation
+<a name="myenergi_documentation"></a>
+### Zappi charge modes.
+<a name="charge_mode"></a>
+zappi has four charge modes to help you charge your EV
+
+| Mode | Description |
+|------|-------------|
+| FAST | Charge your EV as fast as possible – this is just like a dumb charger.  As soon as your EV is plugged it it will start charging and draw as much power as it can |
+| ECO  | In this mode, zappi will try to control the power going to your EV to match any surplus generation. However, as the EV charging standard says that the minimum charge rate is 1.4kW. If your surplus generation goes below this then the car will continue charging, taking extra power from the grid as needed to get to the 1.4kW minimum charge rateIf you want to charge your car quickly (for instance to top up the battery with cheap overnight electricity) then use one of the boosts to charge it at full power |
+| ECO+ 	| Like ECO, zappi will control the power going to your EV to match the surplus generation. However, if the surplus power goes below 1.4kW then zappi will pause the charge so you are not taking power from the grid. (*** See MGL below ***) If you want to charge your car quickly (for instance to top up the battery with cheap overnight electricity) then use one of the boosts to charge it at full power |
+| STOP  | In STOP mode zappi will not charge your car Boosts are also blocked. |
+
+### Zappi boost modes.
+<a name="boost_mode"></a>
+In ECO and ECO+ you can use the boosts to top up your battery quickly.  There are three different boosts available
+| Mode | Description |
+|------|-------------|
+| Manual | Charge your EV straight away with a set amount of energy (kWh) Use the slider in the app or touch on the boost power number to set an exact charge energy |
+| Smart | With Smart Boost you tell zappi how much energy you want to add to your battery and the target time. Zappi will start a quick charge at full power to test the charge speed but then goes back to the normal operation for ECO and ECO+, matching the charge rate to your spare generation. A boost at full power will then take place to top up your battery to the target value by the time set. With Smart Boost your charge will be as green as possible whilst making sure your battery has the desired energy added to it |
+| Scheduled | With Scheduled Boost you can set up to four time periods when the zappi will charge your EV at full power. This is useful for charging your car when electricity is cheap, but we would recommend you use the “My Flexible Tariff” settings in the myenergi online account (myaccount.myenergi.com) so these are set for you automatically. |
+
+### Minimum Green Level (MGL)
+<a name="mgl"></a>
+Minimum Green Level allows you to decide how much grid power zappi uses to keep the 1.4kW minimum charge rate going.
+The feature only works in ECO+ and was introduced for those people who want to squeeze as much of their surplus generation into the EV battery.
+
+With MGL set to 100% all the power going to your EV will come from the local generation.
+If you have less than 1.4kW of local surplus generation available then zappi will pause the charge.  Of course this means that you could be exporting some surplus generation to the grid…
+
+With MGL set to 50% then zappi will take up to 700W from the grid to keep the charge going
+
+If you want to make sure that all your surplus generation is used to charge your EV, then try setting MGL to 1%

@@ -29,9 +29,21 @@ export enum ZappiBoostMode {
 }
 
 export enum ZappiChargeMode {
+    /**
+     * Turn charging off
+     */
     Off = 4,
+    /**
+     * Fast will use the maximum amount of power when charging.
+     */
     Fast = 1,
+    /**
+     * Eco will try to match the generated surplus. Below 1.4 kW generated, it will draw the rest from the grid.
+     */
     Eco = 2,
+    /**
+     * Eco+ will try to charge with generated surplus only. Below 1.4 kW generated, it will pause charging.
+     */
     EcoPlus = 3,
 }
 
