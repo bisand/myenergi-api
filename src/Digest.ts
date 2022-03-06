@@ -6,8 +6,12 @@ import { AuthDigest } from "./AuthDigest";
 export class Digest {
     private _authDigest?: AuthDigest;
     private _baseUrl: url.Url;
+    private _maxRedirectCount: number;
+    private _maxRetryCount: number;
 
     constructor(baseUrl: string, username: string, password: string) {
+        this._maxRedirectCount = 3
+        this._maxRetryCount = 2
         this._baseUrl = url.parse(baseUrl, true);
         this._authDigest = new AuthDigest(username, password, (err) => {
             console.error(err);
@@ -21,7 +25,27 @@ export class Digest {
             options.headers.Authorization = this._authDigest?.getAuthorization(options.method as string, options.path as string);
             const req = https.request(options, (res: any) => {
                 if (res.statusCode == 401) {
-                    if (retryCount > 1) {
+                    // myenergi asn redirect handler.
+                    const myenergiAsn = res.headers["x_myenergi-asn"];
+                    if (myenergiAsn && myenergiAsn !== "undefined" && myenergiAsn !== this._baseUrl.host) {
+                        if (redirectCount > this._maxRedirectCount) {
+                            reject(`Too many redirects: ${myenergiAsn}`);
+                            return;
+                        }
+                        this._baseUrl.host = myenergiAsn;
+                        this._baseUrl.hostname = myenergiAsn;
+                        options.host = myenergiAsn;
+                        options.hostname = myenergiAsn;
+                        redirectCount++;
+                        return this.request(options, data, retryCount, redirectCount)
+                            .then((value) => {
+                                resolve(value);
+                            })
+                            .catch((resaon) => {
+                                reject(resaon);
+                            });
+                    }
+                    if (retryCount > this._maxRetryCount) {
                         reject("Authentication failed");
                         return;
                     }
@@ -45,7 +69,7 @@ export class Digest {
                     // myenergi asn redirect handler.
                     const myenergiAsn = res.headers["x_myenergi-asn"];
                     if (myenergiAsn && myenergiAsn !== "undefined" && myenergiAsn !== this._baseUrl.host) {
-                        if (redirectCount > 2) {
+                        if (redirectCount > this._maxRedirectCount) {
                             reject(`Too many redirects: ${myenergiAsn}`);
                             return;
                         }
@@ -71,7 +95,7 @@ export class Digest {
                         resolve(resData);
                     });
                 } else if (res.statusCode >= 300 && res.statusCode < 400) {
-                    if (redirectCount > 2) {
+                    if (redirectCount > this._maxRedirectCount) {
                         reject(`Too many redirects: ${res.headers["location"]}`);
                         return;
                     }
