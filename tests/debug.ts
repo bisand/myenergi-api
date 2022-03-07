@@ -12,7 +12,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 const runner = new Promise<any>(async (resolve, reject) => {
-    const myenergi = new MyEnergi(process.env.USERNAME as string, process.env.PASSWORD as string);
+    const myenergi = new MyEnergi(process.env.USERNAME as string, process.env.PASSWORD as string, 'https://director.myenergi.net');
 
     const statusAll = await myenergi.getStatusAll();
     console.log(statusAll);

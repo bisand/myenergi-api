@@ -23,9 +23,11 @@ export class MyEnergi {
 
     private _digest: Digest;
 
-    constructor(username: string, password: string) {
+    constructor(username: string, password: string, apiBaseUrl?: string) {
         this._config.username = username;
         this._config.password = password;
+        if (apiBaseUrl)
+            this._config.base_url = apiBaseUrl;
         this._digest = new Digest(this._config.base_url, this._config.username, this._config.password);
     }
 
