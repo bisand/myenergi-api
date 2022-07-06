@@ -1,5 +1,62 @@
 export interface Zappi {
     /**
+     * General documentation
+     * 
+     * Zappi Charge States
+     * 
+     *      PST/STA                 0=Starting      1=Waiting for export/Paused 2=DSR                       3=Diverting/Charging    4=Boosting          5=Complete 
+     *      
+     *      A=EV Disconnected                       Not connected	            Not connected	            Not connected           Not connected	    Not connected
+     *      B1=EV Connected                         Waiting for surplus power   Waiting for surplus power                           Waiting for EV      Charge Complete
+     *      B2=Waiting for EV                       Charge Delayed	            Charge Delayed                                      Charge Delayed      Charge Complete
+     *      C1=EV Ready to charge                   Waiting for surplus power   Waiting for surplus power                           Boosting            Charge Complete
+     *      C2=Charging                             Charging                    Charging	                Charging	            Boosting	
+     *      F=Fault/Restart                         Fault / Restarting	        Fault / Restarting	        Fault / Restarting	    Fault / Restarting  Fault / Restarting
+     *      
+     *      zsh = missing below and for normal operations it is not shown untill you actualy get a error state
+     *      
+     *      0	EV_STARTUP 
+     *      1	EV_DISC 
+     *      2	EV_JUST_DISCONNECTED 
+     *      3	EV_CONNECTED_START 
+     *      4	EV_CONNECTED 
+     *      5	EVSE_SURPLUS_AVAILABLE 
+     *      6	EVSE_LOCKED 
+     *      7	EVSE_WAIT_FOR_TEMP 
+     *      8	EVSE_WAITING_FOR_EV 
+     *      9	EV_CHARGE_DELAYED 
+     *      10	EV_CHARGE_COMPLETE 
+     *      11	EVSE_RCD_CHECK
+     *      12	EVSE_CHARGING 
+     *      13	EVSE_IMPORTING 
+     *      14	EV_CHARGE_STOPPING
+     *      15	EV_READY_LEGACY_START 
+     *      16	EV_READY_LEGACY 
+     *      17	EVSE_WAIT_FOR_LIMIT 
+     *      18	EV_VENT 
+     *      19	EVSE_RESTARTING 
+     *      20	EVSE_PHASE_SWITCHING_RESTART 
+     *      21	EV_WRONG_CABLE 
+     *      22	EVSE_BAD_PILOT 
+     *      23	EVSE_FAULT_LOCK 
+     *      24	EVSE_FAULT_OUTPUT 
+     *      25	EVSE_FAULT_PE 
+     *      26	EVSE_FAULT_COMS 
+     *      27	EVSE_SELFTEST_FAILED 
+     *      28	EVSE_FAULT_CONTACTOR 
+     *      29	EVSE_FAULT_RCD_TRIP 
+     *      30	EVSE_FAULT_OVERLOAD 
+     *      31	EVSE_FAULT_VOLTAGE_RANGE 
+     *      32	EVSE_FAULT_VOLTAGE_MISMATCH 
+     *      33	EVSE_WRONG_PHASE_ROTATION 
+     *      50	CHARGE_BLOCKED 
+     *      51	EV_PRECON 
+     *      52	EVSE_PHSW_DELAY 
+     *      53	EVSE_CHARGE_STOPPED 
+     *      
+     */
+
+    /**
      * Zappi Serial number
      * 
      * @type {string}
@@ -159,9 +216,12 @@ export interface Zappi {
     /**
      * Status
      * 
-     *      1 = Paused,
-     *      3 = Diverting/Charging,
-     *      5 = Complete
+     *      0=Starting
+     *      1=Waiting for export or Paused
+     *      2=DSR
+     *      3=Diverting/Charging
+     *      4=Boosting
+     *      5=Complete 
      * 
      * @type {number}
      */
@@ -187,9 +247,12 @@ export interface Zappi {
     /**
      * Lock Status
      * 
-     *      4 bits
-     *      1st digit - ?,
-     *      2nd digit - 1 unlocked, 0 locked
+     *      4 Bits
+     *      Bit 0: Locked Now 
+     *      Bit 1: Lock when plugged in 
+     *      Bit 2: Lock when unplugged. 
+     *      Bit 3: Charge when locked. 
+     *      Bit 4: Charge Session Allowed (Even if locked)
      * 
      * @type {number}
      */
@@ -277,5 +340,5 @@ export interface Zappi {
     rac: number;
     rrac: number;
     zs: number;
-    zsl: number;
+    zsl: number;    
 }
