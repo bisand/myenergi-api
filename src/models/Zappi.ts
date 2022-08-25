@@ -320,7 +320,7 @@ export interface Zappi {
      *
      * @type {number}
      */
-     bss: number;
+    bss: number;
 
     /**
      * Boost Timed. 
@@ -330,13 +330,13 @@ export interface Zappi {
      *
      * @type {number}
      */
-     bst: number;
+    bst: number;
 
-     /**
-     * Smart Boost Start Time Hour
-     * 
-     * @type {number}
-     */
+    /**
+    * Smart Boost Start Time Hour
+    * 
+    * @type {number}
+    */
     sbh: number;
 
     /**
