@@ -294,9 +294,9 @@ export interface Zappi {
      *      A = EV Disconnected,
      *      B1 = EV Connected,
      *      B2 = Waiting for EV,
-     *      C1 = EV Ready to Charge,
-     *      C2 = Charging,
-     *      F = Fault
+     *      C1 = Charging,
+     *      C2 = Charging Max Power,
+     *      F = Fault/Restart
      * 
      * @type {string}
      */
