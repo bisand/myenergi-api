@@ -59,7 +59,7 @@ export class MyEnergi {
             const jsonData = JSON.parse(data);
             if (jsonData.zappi) {
                 const zappi = (Object.assign<Zappi[], any>([] as Zappi[], jsonData.zappi) as Zappi[]).find((zappi) => {
-                    return zappi.sno === serialNumber;
+                    return zappi.sno == serialNumber;
                 });
                 if (zappi) return Object.assign<Zappi, any>({} as Zappi, zappi);
                 else return null;
@@ -123,7 +123,7 @@ export class MyEnergi {
             const jsonData = JSON.parse(data);
             if (jsonData.eddi) {
                 const eddi = (Object.assign<Eddi[], any>([] as Eddi[], jsonData.eddi) as Eddi[]).find((eddi) => {
-                    return eddi.sno === serialNumber;
+                    return eddi.sno == serialNumber;
                 });
                 if (eddi) return Object.assign<Eddi, any>({} as Eddi, eddi);
                 else return null;
@@ -172,7 +172,7 @@ export class MyEnergi {
             const jsonData = JSON.parse(data);
             if (jsonData.harvi) {
                 const harvi = (Object.assign<Harvi[], any>([] as Harvi[], jsonData.harvi) as Harvi[]).find((harvi) => {
-                    return harvi.sno === serialNumber;
+                    return harvi.sno == serialNumber;
                 });
                 if (harvi) return Object.assign<Harvi, any>({} as Harvi, harvi);
                 else return null;
