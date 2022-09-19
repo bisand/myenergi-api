@@ -32,104 +32,153 @@ export class MyEnergi {
     }
 
     public async getStatusAll(): Promise<any> {
-        const data = await this._digest.get(this._config.status_url);
-        const jsonData = JSON.parse(data);
-        return jsonData;
+        try {
+            const data = await this._digest.get(this._config.status_url);
+            const jsonData = JSON.parse(data);
+            return jsonData;
+        } catch (error) {
+            return [];
+        }
     }
 
     public async getStatusZappiAll(): Promise<Zappi[]> {
-        const data = await this._digest.get(this._config.zappi_url);
-        const jsonData = JSON.parse(data);
-        if (jsonData.zappi) return Object.assign<Zappi[], any>([] as Zappi[], jsonData.zappi);
-        else return [] as Zappi[];
+        try {
+            const data = await this._digest.get(this._config.zappi_url);
+            const jsonData = JSON.parse(data);
+            if (jsonData.zappi) return Object.assign<Zappi[], any>([] as Zappi[], jsonData.zappi);
+            else return [] as Zappi[];
+
+        } catch (error) {
+            return [] as Zappi[];
+        }
     }
 
     public async getStatusZappi(serialNumber: string): Promise<Zappi | null> {
-        const data = await this._digest.get(this._config.zappi_url);
-        const jsonData = JSON.parse(data);
-        if (jsonData.zappi) {
-            const zappi = (Object.assign<Zappi[], any>([] as Zappi[], jsonData.zappi) as Zappi[]).find((zappi) => {
-                return zappi.sno === serialNumber;
-            });
-            if (zappi) return Object.assign<Zappi, any>({} as Zappi, zappi);
-            else return null;
-        } else return null;
+        try {
+            const data = await this._digest.get(this._config.zappi_url);
+            const jsonData = JSON.parse(data);
+            if (jsonData.zappi) {
+                const zappi = (Object.assign<Zappi[], any>([] as Zappi[], jsonData.zappi) as Zappi[]).find((zappi) => {
+                    return zappi.sno === serialNumber;
+                });
+                if (zappi) return Object.assign<Zappi, any>({} as Zappi, zappi);
+                else return null;
+            } else return null;
+        } catch (error) {
+            return null;
+        }
     }
 
     public async setZappiChargeMode(serialNo: string, chargeMode: ZappiChargeMode): Promise<any> {
-        const url = `${this._config.zappi_mode_url}${serialNo}-${chargeMode}-0-0-0000`;
-        const data = await this._digest.get(url);
-        const jsonData = JSON.parse(data);
-        return jsonData;
+        try {
+            const url = `${this._config.zappi_mode_url}${serialNo}-${chargeMode}-0-0-0000`;
+            const data = await this._digest.get(url);
+            const jsonData = JSON.parse(data);
+            return jsonData;
+        } catch (error) {
+            return {};
+        }
     }
 
     public async setZappiBoostMode(serialNo: string, boostMode: ZappiBoostMode, kwh: number = 0, completeTime: string = "0000"): Promise<any> {
-        if (boostMode === ZappiBoostMode.Stop) {
-            kwh = 0;
-            completeTime = "0000";
+        try {
+            if (boostMode === ZappiBoostMode.Stop) {
+                kwh = 0;
+                completeTime = "0000";
+            }
+            const url = `${this._config.zappi_mode_url}${serialNo}-0-${boostMode}-${kwh}-${completeTime}`;
+            const data = await this._digest.get(url);
+            const jsonData = JSON.parse(data);
+            return jsonData;
+        } catch (error) {
+            return {};
         }
-        const url = `${this._config.zappi_mode_url}${serialNo}-0-${boostMode}-${kwh}-${completeTime}`;
-        const data = await this._digest.get(url);
-        const jsonData = JSON.parse(data);
-        return jsonData;
     }
 
     public async setZappiGreenLevel(serialNo: string, percentage: number): Promise<any> {
-        const url = `${this._config.zappi_min_green_url}${serialNo}-${percentage}`;
-        const data = await this._digest.get(url);
-        const jsonData = JSON.parse(data);
-        return jsonData;
+        try {
+            const url = `${this._config.zappi_min_green_url}${serialNo}-${percentage}`;
+            const data = await this._digest.get(url);
+            const jsonData = JSON.parse(data);
+            return jsonData;
+        } catch (error) {
+            return {};
+        }
     }
 
     public async getStatusEddiAll(): Promise<Eddi[]> {
-        const data = await this._digest.get(this._config.eddi_url);
-        const jsonData = JSON.parse(data);
-        if (jsonData.eddi) return Object.assign<Eddi[], any>([] as Eddi[], jsonData.eddi);
-        else return [] as Eddi[];
+        try {
+            const data = await this._digest.get(this._config.eddi_url);
+            const jsonData = JSON.parse(data);
+            if (jsonData.eddi) return Object.assign<Eddi[], any>([] as Eddi[], jsonData.eddi);
+            else return [] as Eddi[];
+        } catch (error) {
+            return [] as Eddi[];
+        }
     }
 
     public async getStatusEddi(serialNumber: string): Promise<Eddi | null> {
-        const data = await this._digest.get(this._config.eddi_url);
-        const jsonData = JSON.parse(data);
-        if (jsonData.eddi) {
-            const eddi = (Object.assign<Eddi[], any>([] as Eddi[], jsonData.eddi) as Eddi[]).find((eddi) => {
-                return eddi.sno === serialNumber;
-            });
-            if (eddi) return Object.assign<Eddi, any>({} as Eddi, eddi);
-            else return null;
-        } else return null;
+        try {
+            const data = await this._digest.get(this._config.eddi_url);
+            const jsonData = JSON.parse(data);
+            if (jsonData.eddi) {
+                const eddi = (Object.assign<Eddi[], any>([] as Eddi[], jsonData.eddi) as Eddi[]).find((eddi) => {
+                    return eddi.sno === serialNumber;
+                });
+                if (eddi) return Object.assign<Eddi, any>({} as Eddi, eddi);
+                else return null;
+            } else return null;
+        } catch (error) {
+            return null;
+        }
     }
 
     public async setEddiMode(serialNo: string, mode: EddiMode): Promise<any> {
-        const url = `${this._config.eddi_mode_url}${serialNo}-${mode}`;
-        const data = await this._digest.get(url);
-        const jsonData = JSON.parse(data);
-        return jsonData;
+        try {
+            const url = `${this._config.eddi_mode_url}${serialNo}-${mode}`;
+            const data = await this._digest.get(url);
+            const jsonData = JSON.parse(data);
+            return jsonData;
+        } catch (error) {
+            return {};
+        }
     }
 
     public async setEddiBoost(serialNo: string, boost: EddiBoost, minutes: number = 0): Promise<any> {
-        const url = `${this._config.eddi_boost_url}${serialNo}-${boost}-${minutes}`;
-        const data = await this._digest.get(url);
-        const jsonData = JSON.parse(data);
-        return jsonData;
+        try {
+            const url = `${this._config.eddi_boost_url}${serialNo}-${boost}-${minutes}`;
+            const data = await this._digest.get(url);
+            const jsonData = JSON.parse(data);
+            return jsonData;
+        } catch (error) {
+            return {};
+        }
     }
 
     public async getStatusHarviAll(): Promise<Harvi[]> {
-        const data = await this._digest.get(this._config.harvi_url);
-        const jsonData = JSON.parse(data);
-        if (jsonData.harvi) return Object.assign<Harvi[], any>([] as Harvi[], jsonData.harvi);
-        else return [] as Harvi[];
+        try {
+            const data = await this._digest.get(this._config.harvi_url);
+            const jsonData = JSON.parse(data);
+            if (jsonData.harvi) return Object.assign<Harvi[], any>([] as Harvi[], jsonData.harvi);
+            else return [] as Harvi[];
+        } catch (error) {
+            return [] as Harvi[];
+        }
     }
 
     public async getStatusHarvi(serialNumber: string): Promise<Harvi | null> {
-        const data = await this._digest.get(this._config.harvi_url);
-        const jsonData = JSON.parse(data);
-        if (jsonData.harvi) {
-            const harvi = (Object.assign<Harvi[], any>([] as Harvi[], jsonData.harvi) as Harvi[]).find((harvi) => {
-                return harvi.sno === serialNumber;
-            });
-            if (harvi) return Object.assign<Harvi, any>({} as Harvi, harvi);
-            else return null;
-        } else return null;
+        try {
+            const data = await this._digest.get(this._config.harvi_url);
+            const jsonData = JSON.parse(data);
+            if (jsonData.harvi) {
+                const harvi = (Object.assign<Harvi[], any>([] as Harvi[], jsonData.harvi) as Harvi[]).find((harvi) => {
+                    return harvi.sno === serialNumber;
+                });
+                if (harvi) return Object.assign<Harvi, any>({} as Harvi, harvi);
+                else return null;
+            } else return null;
+        } catch (error) {
+            return null;
+        }
     }
 }
