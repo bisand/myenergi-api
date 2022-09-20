@@ -6,7 +6,7 @@ import {
     ZappiChargeMode,
     EddiBoost,
     EddiMode,
-} from "../src";
+} from "./src";
 import * as dotenv from "dotenv";
 
 dotenv.config();
@@ -22,7 +22,7 @@ const runner = new Promise<any>(async (resolve, reject) => {
 
     if (zappiAll[0]) {
         let sno: string = zappiAll[0].sno;
-        const statusZappi: Zappi = await myenergi.getStatusZappi(sno);
+        const statusZappi: Zappi | null = await myenergi.getStatusZappi(sno);
         console.log(statusZappi);
 
         const chargeMode = await myenergi.setZappiChargeMode(sno, ZappiChargeMode.EcoPlus);

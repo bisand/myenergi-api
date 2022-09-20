@@ -1,6 +1,6 @@
 {
     "name": "myenergi-api",
-    "version": "1.1.0",
+    "version": "2.0.0",
     "description": "NodeJS implementation of MyEnergi API for controlling Zappi, Eddi and other MyEnergi products",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -9,7 +9,7 @@
     ],
     "scripts": {
         "build": "tsc",
-        "test": "env TS_NODE_PROJECT='tsconfig.testing.json' mocha -r ts-node/register tests/**/*-spec.ts",
+        "test": "jest --runInBand --config jestconfig.json",
         "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
         "lint": "tslint -p tsconfig.json",
         "prepare": "tsc",
@@ -35,15 +35,16 @@
     "homepage": "https://github.com/bisand/myenergi-api#readme",
     "dependencies": {},
     "devDependencies": {
-        "@types/chai": "^4.3.0",
-        "@types/mocha": "^9.1.0",
+        "@jest/test-sequencer": "^28.1.1",
+        "@types/jest": "^28.1.3",
         "@types/node": "^16.11.12",
-        "dotenv": "^16.0.0",
-        "chai": "^4.3.6",
-        "mocha": "^9.2.1",
-        "prettier": "^2.5.1",
-        "ts-node": "^10.7.0",
+        "dotenv": "^16.0.2",
+        "jest": "^28.1.3",
+        "nock": "^13.2.9",
+        "prettier": "^2.7.1",
+        "ts-jest": "^28.0.8",
+        "ts-node": "^10.9.1",
         "tslint": "^6.1.3",
-        "typescript": "^4.6.2"
+        "typescript": "^4.8.3"
     }
 }
