@@ -69,7 +69,7 @@ export class AuthDigest {
         if (!wwwAuthHeader)
             return;
 
-        const authSplit = wwwAuthHeader?.split(",") as string[];
+        const authSplit = wwwAuthHeader.split(",") as string[];
 
         for (const item of authSplit) {
             if (item && item.indexOf("realm=") >= 0) {
