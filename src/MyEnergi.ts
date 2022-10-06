@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Digest } from "./Digest";
 import { Eddi } from "./models/Eddi";
 import { Harvi } from "./models/Harvi";
@@ -31,7 +32,7 @@ export class MyEnergi {
         this._digest = new Digest(this._config.base_url, this._config.username, this._config.password);
     }
 
-    public async getStatusAll(): Promise<unknown> {
+    public async getStatusAll(): Promise<any> {
         try {
             const data = await this._digest.get(new URL(this._config.status_url, this._config.base_url)) as string;
             const jsonData = JSON.parse(data);
@@ -69,7 +70,7 @@ export class MyEnergi {
         }
     }
 
-    public async setZappiChargeMode(serialNo: string, chargeMode: ZappiChargeMode): Promise<unknown> {
+    public async setZappiChargeMode(serialNo: string, chargeMode: ZappiChargeMode): Promise<any> {
         try {
             const url = new URL(`${this._config.zappi_mode_url}${serialNo}-${chargeMode}-0-0-0000`, this._config.base_url);
             const data = await this._digest.get(url);
@@ -80,7 +81,7 @@ export class MyEnergi {
         }
     }
 
-    public async setZappiBoostMode(serialNo: string, boostMode: ZappiBoostMode, kwh = 0, completeTime = "0000"): Promise<unknown> {
+    public async setZappiBoostMode(serialNo: string, boostMode: ZappiBoostMode, kwh = 0, completeTime = "0000"): Promise<any> {
         try {
             if (boostMode === ZappiBoostMode.Stop) {
                 kwh = 0;
@@ -95,7 +96,7 @@ export class MyEnergi {
         }
     }
 
-    public async setZappiGreenLevel(serialNo: string, percentage: number): Promise<unknown> {
+    public async setZappiGreenLevel(serialNo: string, percentage: number): Promise<any> {
         try {
             const url = new URL(`${this._config.zappi_min_green_url}${serialNo}-${percentage}`, this._config.base_url);
             const data = await this._digest.get(url);
@@ -133,7 +134,7 @@ export class MyEnergi {
         }
     }
 
-    public async setEddiMode(serialNo: string, mode: EddiMode): Promise<unknown> {
+    public async setEddiMode(serialNo: string, mode: EddiMode): Promise<any> {
         try {
             const url = new URL(`${this._config.eddi_mode_url}${serialNo}-${mode}`, this._config.base_url);
             const data = await this._digest.get(url);
@@ -144,7 +145,7 @@ export class MyEnergi {
         }
     }
 
-    public async setEddiBoost(serialNo: string, boost: EddiBoost, minutes = 0): Promise<unknown> {
+    public async setEddiBoost(serialNo: string, boost: EddiBoost, minutes = 0): Promise<any> {
         try {
             const url = new URL(`${this._config.eddi_boost_url}${serialNo}-${boost}-${minutes}`, this._config.base_url);
             const data = await this._digest.get(url);
