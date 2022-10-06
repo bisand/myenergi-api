@@ -65,34 +65,38 @@ export class AuthDigest {
     }
 
     public init(wwwAuthHeader: string) {
-        const authSplit = wwwAuthHeader.split(",") as string[];
+
+        if (!wwwAuthHeader)
+            return;
+
+        const authSplit = wwwAuthHeader?.split(",") as string[];
 
         for (const item of authSplit) {
-            if (item.indexOf("realm=") >= 0) {
+            if (item && item.indexOf("realm=") >= 0) {
                 const realmSplit = item.split('="');
                 this._realm = realmSplit[realmSplit.length - 1];
                 this._realm = this._realm.substring(0, this._realm.length - 1);
             }
 
-            if (item.indexOf("nonce=") >= 0) {
+            if (item && item.indexOf("nonce=") >= 0) {
                 const nonceSplit = item.split('="');
                 this._nonce = nonceSplit[nonceSplit.length - 1];
                 this._nonce = this._nonce.substring(0, this._nonce.length - 1);
             }
 
-            if (item.indexOf("qop=") >= 0) {
+            if (item && item.indexOf("qop=") >= 0) {
                 const qopSplit = item.split('="');
                 this._qop = qopSplit[qopSplit.length - 1];
                 this._qop = this._qop.substring(0, this._qop.length - 1);
             }
 
-            if (item.indexOf("opaque=") >= 0) {
+            if (item && item.indexOf("opaque=") >= 0) {
                 const opaqueSplit = item.split('="');
                 this._opaque = opaqueSplit[opaqueSplit.length - 1];
                 this._opaque = this._opaque.substring(0, this._opaque.length - 1);
             }
 
-            if (item.indexOf("algorithm=") >= 0) {
+            if (item && item.indexOf("algorithm=") >= 0) {
                 const algorithmSplit = item.split("=");
                 this._algorithm = algorithmSplit[algorithmSplit.length - 1];
                 this._algorithm = this._algorithm.substring(0, this._algorithm.length);
