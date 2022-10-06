@@ -40,7 +40,7 @@ export class AuthDigest {
     private _nc: number;
     public get nc(): string | undefined {
         this._nc++;
-        var myHex = ("0000000" + this._nc?.toString(16)).substr(-8);
+        const myHex = ("0000000" + this._nc?.toString(16)).substr(-8);
         return myHex;
     }
     private _cnonce?: string | undefined;
@@ -50,8 +50,8 @@ export class AuthDigest {
     }
 
     private md5(data: string) {
-        let md5 = crypto.createHash("md5");
-        let result = md5.update(data).digest("hex");
+        const md5 = crypto.createHash("md5");
+        const result = md5.update(data).digest("hex");
         return result;
     }
 
@@ -65,35 +65,35 @@ export class AuthDigest {
     }
 
     public init(wwwAuthHeader: string) {
-        let authSplit = wwwAuthHeader.split(",") as string[];
+        const authSplit = wwwAuthHeader.split(",") as string[];
 
-        for (let item of authSplit) {
+        for (const item of authSplit) {
             if (item.indexOf("realm=") >= 0) {
-                let realmSplit = item.split('="');
+                const realmSplit = item.split('="');
                 this._realm = realmSplit[realmSplit.length - 1];
                 this._realm = this._realm.substring(0, this._realm.length - 1);
             }
 
             if (item.indexOf("nonce=") >= 0) {
-                let nonceSplit = item.split('="');
+                const nonceSplit = item.split('="');
                 this._nonce = nonceSplit[nonceSplit.length - 1];
                 this._nonce = this._nonce.substring(0, this._nonce.length - 1);
             }
 
             if (item.indexOf("qop=") >= 0) {
-                let qopSplit = item.split('="');
+                const qopSplit = item.split('="');
                 this._qop = qopSplit[qopSplit.length - 1];
                 this._qop = this._qop.substring(0, this._qop.length - 1);
             }
 
             if (item.indexOf("opaque=") >= 0) {
-                let opaqueSplit = item.split('="');
+                const opaqueSplit = item.split('="');
                 this._opaque = opaqueSplit[opaqueSplit.length - 1];
                 this._opaque = this._opaque.substring(0, this._opaque.length - 1);
             }
 
             if (item.indexOf("algorithm=") >= 0) {
-                let algorithmSplit = item.split("=");
+                const algorithmSplit = item.split("=");
                 this._algorithm = algorithmSplit[algorithmSplit.length - 1];
                 this._algorithm = this._algorithm.substring(0, this._algorithm.length);
                 if (this._onError && this.algorithm !== "MD5") {
@@ -109,9 +109,9 @@ export class AuthDigest {
 
         const nc = this.nc;
         const cnonce = this.cnonce;
-        let HA1 = this.md5(this.username + ":" + this.realm + ":" + this._password);
-        let HA2 = this.md5(httpMethod + ":" + path);
-        let response = this.md5(HA1 + ":" + this.nonce + ":" + nc + ":" + cnonce + ":" + this.qop + ":" + HA2);
+        const HA1 = this.md5(this.username + ":" + this.realm + ":" + this._password);
+        const HA2 = this.md5(httpMethod + ":" + path);
+        const response = this.md5(HA1 + ":" + this.nonce + ":" + nc + ":" + cnonce + ":" + this.qop + ":" + HA2);
 
         let res = `Digest username="${this.username}",`;
         res += `realm="${this.realm}",`;

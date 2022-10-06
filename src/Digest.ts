@@ -1,32 +1,32 @@
+import { IncomingMessage } from 'http';
 import * as https from "https";
 import { RequestOptions } from "https";
-import * as url from "url";
 import { AuthDigest } from "./AuthDigest";
 
 export class Digest {
     private _authDigest?: AuthDigest;
-    private _baseUrl: url.Url;
+    private _baseUrl: URL;
     private _maxRedirectCount: number;
     private _maxRetryCount: number;
 
     constructor(baseUrl: string, username: string, password: string) {
         this._maxRedirectCount = 3
         this._maxRetryCount = 2
-        this._baseUrl = url.parse(baseUrl, true);
+        this._baseUrl = new URL(baseUrl);
         this._authDigest = new AuthDigest(username, password, (err) => {
             console.error(err);
         });
     }
 
-    private request(options: RequestOptions, data?: any, retryCount: number = 0, redirectCount: number = 0): Promise<any> {
-        return new Promise<any>((resolve, reject) => {
-            let resData: string = "";
+    private request(options: RequestOptions, data?: unknown, retryCount = 0, redirectCount = 0): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            let resData = "";
             if (!options.headers) options.headers = {};
             options.headers.Authorization = this._authDigest?.getAuthorization(options.method as string, options.path as string);
-            const req = https.request(options, (res: any) => {
+            const req = https.request(options, (res: IncomingMessage) => {
                 if (res.statusCode == 401) {
                     // myenergi asn redirect handler.
-                    const myenergiAsn = res.headers["x_myenergi-asn"];
+                    const myenergiAsn = res.headers["x_myenergi-asn"] as string;
                     if (myenergiAsn && myenergiAsn !== "undefined" && myenergiAsn !== this._baseUrl.host) {
                         if (redirectCount > this._maxRedirectCount) {
                             reject(`Too many redirects: ${myenergiAsn}`);
@@ -65,9 +65,9 @@ export class Digest {
                         .catch((resaon) => {
                             reject(resaon);
                         });
-                } else if (res.statusCode >= 200 && res.statusCode < 300) {
+                } else if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
                     // myenergi asn redirect handler.
-                    const myenergiAsn = res.headers["x_myenergi-asn"];
+                    const myenergiAsn = res.headers["x_myenergi-asn"] as string;
                     if (myenergiAsn && myenergiAsn !== "undefined" && myenergiAsn !== this._baseUrl.host) {
                         if (redirectCount > this._maxRedirectCount) {
                             reject(`Too many redirects: ${myenergiAsn}`);
@@ -94,13 +94,13 @@ export class Digest {
                     res.on("end", () => {
                         resolve(resData);
                     });
-                } else if (res.statusCode >= 300 && res.statusCode < 400) {
+                } else if (res.statusCode && res.statusCode >= 300 && res.statusCode < 400) {
                     if (redirectCount > this._maxRedirectCount) {
                         reject(`Too many redirects: ${res.headers["location"]}`);
                         return;
                     }
                     const location = res.headers["location"] as string;
-                    const uri = url.parse(location, true);
+                    const uri = new URL(location);
                     if (uri.host !== this._baseUrl.host) {
                         this._baseUrl.host = uri.host;
                     }
@@ -119,7 +119,7 @@ export class Digest {
                 }
             });
 
-            req.on("error", (e: any) => {
+            req.on("error", (e: Error) => {
                 console.error(`problem with request: ${e.message}`);
                 reject(e);
             });
@@ -132,19 +132,18 @@ export class Digest {
         });
     }
 
-    public get(requestUrl: string, data?: any): Promise<any> {
-        const uri = url.parse(requestUrl, true);
+    public get(requestUrl: URL, data?: unknown): Promise<string> {
         const options: RequestOptions = {
             hostname: this._baseUrl.hostname,
             host: this._baseUrl.host,
             port: this._baseUrl.port,
-            path: uri.path,
+            path: requestUrl.pathname,
             method: "GET",
             headers: {
                 Connection: "Keep-Alive",
                 "Content-Type": "application/json",
                 Accept: "application/json",
-                Host: uri.hostname as string,
+                Host: requestUrl.hostname as string,
             },
         };
         return this.request(options, data);

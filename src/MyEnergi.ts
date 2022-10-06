@@ -31,9 +31,9 @@ export class MyEnergi {
         this._digest = new Digest(this._config.base_url, this._config.username, this._config.password);
     }
 
-    public async getStatusAll(): Promise<any> {
+    public async getStatusAll(): Promise<unknown> {
         try {
-            const data = await this._digest.get(this._config.status_url);
+            const data = await this._digest.get(new URL(this._config.status_url, this._config.base_url)) as string;
             const jsonData = JSON.parse(data);
             return jsonData;
         } catch (error) {
@@ -43,9 +43,9 @@ export class MyEnergi {
 
     public async getStatusZappiAll(): Promise<Zappi[]> {
         try {
-            const data = await this._digest.get(this._config.zappi_url);
+            const data = await this._digest.get(new URL(this._config.zappi_url, this._config.base_url)) as string;
             const jsonData = JSON.parse(data);
-            if (jsonData.zappi) return Object.assign<Zappi[], any>([] as Zappi[], jsonData.zappi);
+            if (jsonData.zappi) return Object.assign<Zappi[], unknown>([] as Zappi[], jsonData.zappi);
             else return [] as Zappi[];
 
         } catch (error) {
@@ -55,13 +55,13 @@ export class MyEnergi {
 
     public async getStatusZappi(serialNumber: string): Promise<Zappi | null> {
         try {
-            const data = await this._digest.get(this._config.zappi_url);
+            const data = await this._digest.get(new URL(this._config.zappi_url, this._config.base_url)) as string;
             const jsonData = JSON.parse(data);
             if (jsonData.zappi) {
-                const zappi = (Object.assign<Zappi[], any>([] as Zappi[], jsonData.zappi) as Zappi[]).find((zappi) => {
+                const zappi = (Object.assign<Zappi[], unknown>([] as Zappi[], jsonData.zappi) as Zappi[]).find((zappi) => {
                     return zappi.sno == serialNumber;
                 });
-                if (zappi) return Object.assign<Zappi, any>({} as Zappi, zappi);
+                if (zappi) return Object.assign<Zappi, unknown>({} as Zappi, zappi);
                 else return null;
             } else return null;
         } catch (error) {
@@ -69,9 +69,9 @@ export class MyEnergi {
         }
     }
 
-    public async setZappiChargeMode(serialNo: string, chargeMode: ZappiChargeMode): Promise<any> {
+    public async setZappiChargeMode(serialNo: string, chargeMode: ZappiChargeMode): Promise<unknown> {
         try {
-            const url = `${this._config.zappi_mode_url}${serialNo}-${chargeMode}-0-0-0000`;
+            const url = new URL(`${this._config.zappi_mode_url}${serialNo}-${chargeMode}-0-0-0000`, this._config.base_url);
             const data = await this._digest.get(url);
             const jsonData = JSON.parse(data);
             return jsonData;
@@ -80,13 +80,13 @@ export class MyEnergi {
         }
     }
 
-    public async setZappiBoostMode(serialNo: string, boostMode: ZappiBoostMode, kwh: number = 0, completeTime: string = "0000"): Promise<any> {
+    public async setZappiBoostMode(serialNo: string, boostMode: ZappiBoostMode, kwh = 0, completeTime = "0000"): Promise<unknown> {
         try {
             if (boostMode === ZappiBoostMode.Stop) {
                 kwh = 0;
                 completeTime = "0000";
             }
-            const url = `${this._config.zappi_mode_url}${serialNo}-0-${boostMode}-${kwh}-${completeTime}`;
+            const url = new URL(`${this._config.zappi_mode_url}${serialNo}-0-${boostMode}-${kwh}-${completeTime}`, this._config.base_url);
             const data = await this._digest.get(url);
             const jsonData = JSON.parse(data);
             return jsonData;
@@ -95,9 +95,9 @@ export class MyEnergi {
         }
     }
 
-    public async setZappiGreenLevel(serialNo: string, percentage: number): Promise<any> {
+    public async setZappiGreenLevel(serialNo: string, percentage: number): Promise<unknown> {
         try {
-            const url = `${this._config.zappi_min_green_url}${serialNo}-${percentage}`;
+            const url = new URL(`${this._config.zappi_min_green_url}${serialNo}-${percentage}`, this._config.base_url);
             const data = await this._digest.get(url);
             const jsonData = JSON.parse(data);
             return jsonData;
@@ -108,9 +108,9 @@ export class MyEnergi {
 
     public async getStatusEddiAll(): Promise<Eddi[]> {
         try {
-            const data = await this._digest.get(this._config.eddi_url);
+            const data = await this._digest.get(new URL(this._config.eddi_url, this._config.base_url));
             const jsonData = JSON.parse(data);
-            if (jsonData.eddi) return Object.assign<Eddi[], any>([] as Eddi[], jsonData.eddi);
+            if (jsonData.eddi) return Object.assign<Eddi[], unknown>([] as Eddi[], jsonData.eddi);
             else return [] as Eddi[];
         } catch (error) {
             return [] as Eddi[];
@@ -119,13 +119,13 @@ export class MyEnergi {
 
     public async getStatusEddi(serialNumber: string): Promise<Eddi | null> {
         try {
-            const data = await this._digest.get(this._config.eddi_url);
+            const data = await this._digest.get(new URL(this._config.eddi_url, this._config.base_url));
             const jsonData = JSON.parse(data);
             if (jsonData.eddi) {
-                const eddi = (Object.assign<Eddi[], any>([] as Eddi[], jsonData.eddi) as Eddi[]).find((eddi) => {
+                const eddi = (Object.assign<Eddi[], unknown>([] as Eddi[], jsonData.eddi) as Eddi[]).find((eddi) => {
                     return eddi.sno == serialNumber;
                 });
-                if (eddi) return Object.assign<Eddi, any>({} as Eddi, eddi);
+                if (eddi) return Object.assign<Eddi, unknown>({} as Eddi, eddi);
                 else return null;
             } else return null;
         } catch (error) {
@@ -133,9 +133,9 @@ export class MyEnergi {
         }
     }
 
-    public async setEddiMode(serialNo: string, mode: EddiMode): Promise<any> {
+    public async setEddiMode(serialNo: string, mode: EddiMode): Promise<unknown> {
         try {
-            const url = `${this._config.eddi_mode_url}${serialNo}-${mode}`;
+            const url = new URL(`${this._config.eddi_mode_url}${serialNo}-${mode}`, this._config.base_url);
             const data = await this._digest.get(url);
             const jsonData = JSON.parse(data);
             return jsonData;
@@ -144,9 +144,9 @@ export class MyEnergi {
         }
     }
 
-    public async setEddiBoost(serialNo: string, boost: EddiBoost, minutes: number = 0): Promise<any> {
+    public async setEddiBoost(serialNo: string, boost: EddiBoost, minutes = 0): Promise<unknown> {
         try {
-            const url = `${this._config.eddi_boost_url}${serialNo}-${boost}-${minutes}`;
+            const url = new URL(`${this._config.eddi_boost_url}${serialNo}-${boost}-${minutes}`, this._config.base_url);
             const data = await this._digest.get(url);
             const jsonData = JSON.parse(data);
             return jsonData;
@@ -157,9 +157,9 @@ export class MyEnergi {
 
     public async getStatusHarviAll(): Promise<Harvi[]> {
         try {
-            const data = await this._digest.get(this._config.harvi_url);
+            const data = await this._digest.get(new URL(this._config.harvi_url, this._config.base_url));
             const jsonData = JSON.parse(data);
-            if (jsonData.harvi) return Object.assign<Harvi[], any>([] as Harvi[], jsonData.harvi);
+            if (jsonData.harvi) return Object.assign<Harvi[], unknown>([] as Harvi[], jsonData.harvi);
             else return [] as Harvi[];
         } catch (error) {
             return [] as Harvi[];
@@ -168,13 +168,13 @@ export class MyEnergi {
 
     public async getStatusHarvi(serialNumber: string): Promise<Harvi | null> {
         try {
-            const data = await this._digest.get(this._config.harvi_url);
+            const data = await this._digest.get(new URL(this._config.harvi_url, this._config.base_url));
             const jsonData = JSON.parse(data);
             if (jsonData.harvi) {
-                const harvi = (Object.assign<Harvi[], any>([] as Harvi[], jsonData.harvi) as Harvi[]).find((harvi) => {
+                const harvi = (Object.assign<Harvi[], unknown>([] as Harvi[], jsonData.harvi) as Harvi[]).find((harvi) => {
                     return harvi.sno == serialNumber;
                 });
-                if (harvi) return Object.assign<Harvi, any>({} as Harvi, harvi);
+                if (harvi) return Object.assign<Harvi, unknown>({} as Harvi, harvi);
                 else return null;
             } else return null;
         } catch (error) {

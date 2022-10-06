@@ -1,13 +1,14 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { MyEnergi } from "../src/MyEnergi";
 import nock from "nock";
 import { Zappi } from "../src/models/Zappi";
 
 describe("MyEnergi Tests", () => {
-    beforeAll(() => {});
-    afterAll(() => {});
-    beforeEach(() => {});
+    beforeAll(() => { });
+    afterAll(() => { });
+    beforeEach(() => { });
 
-    let zappiResponse = {
+    const zappiResponse = {
         zappi: [
             {
                 sno: 12345678,
@@ -69,7 +70,7 @@ describe("MyEnergi Tests", () => {
         const query = new MyEnergi("test", "pwd", "https://test.com");
 
         const res = await query.getStatusZappi("12345678");
-        const response: Zappi = Object.assign<Zappi, any>({} as Zappi, zappiResponse.zappi[0]);
+        const response: Zappi = Object.assign<Zappi, unknown>({} as Zappi, zappiResponse.zappi[0]);
         expect(res).toMatchObject(response);
         nock.cleanAll();
     }, 60000);
@@ -109,13 +110,13 @@ describe("MyEnergi Tests", () => {
     }, 60000);
 
     it("Should NOT throw an error on HTTP response 503 from redirect", async () => {
-        const scope1 = nock("https://test.com")
+        nock("https://test.com")
             .defaultReplyHeaders({ "www-authenticate": "Digest realm=Example", "x_myenergi-asn": "login.com" })
             .get("/cgi-jstatus-Z")
             .times(1)
             .reply(401);
 
-        const scope2 = nock("https://login.com")
+        nock("https://login.com")
             .get("/cgi-jstatus-Z")
             .times(1)
             .reply(503);
