@@ -101,7 +101,7 @@ export class AuthDigest {
                 this._algorithm = algorithmSplit[algorithmSplit.length - 1];
                 this._algorithm = this._algorithm.substring(0, this._algorithm.length);
                 if (this._onError && this.algorithm !== "MD5") {
-                    this._onError(`Algorithm ${this.algorithm} is ont supported. Only MD5 is supportet`);
+                    this._onError(`Algorithm ${this.algorithm} is not supported. Only MD5 is supportet`);
                 }
             }
         }
