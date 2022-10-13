@@ -2,6 +2,8 @@
 import { MyEnergi } from "../src/MyEnergi";
 import nock from "nock";
 import { Zappi } from "../src/models/Zappi";
+import { AppKeyValues } from '../src/models/AppKeyValues';
+import { KeyValue } from '../src/models/KeyValue';
 
 describe("MyEnergi Tests", () => {
     beforeAll(() => { });
@@ -52,6 +54,14 @@ describe("MyEnergi Tests", () => {
             },
         ],
     };
+
+    const keyValueResponse = {
+        H12345678: [{ key: "Z1234567", val: "Zappi" }]
+    }
+
+    const keyValueSetResponse = {
+        H12345678: [{ key: "Z1234567", val: "Zappi123" }]
+    }
 
     it("should be able to test", () => {
         expect(true).toBeTruthy();
@@ -127,4 +137,42 @@ describe("MyEnergi Tests", () => {
         expect(res).toBeNull();
         nock.cleanAll();
     }, 60000);
+
+    it("Should return valid App key values", async () => {
+        nock("https://test.com")
+            .defaultReplyHeaders({ "www-authenticate": "Digest realm=Example" })
+            .get("/cgi-get-app-key-Z1234567")
+            .reply(200, keyValueResponse);
+
+        const query = new MyEnergi("test", "pwd", "https://test.com");
+
+        const res = await query.getAppKey("Z1234567");
+        const response: AppKeyValues = Object.assign<AppKeyValues, unknown>({} as AppKeyValues, keyValueResponse);
+        const testResponse: KeyValue[] = response[Object.keys(response)[0]];
+        expect(res).toMatchObject(testResponse);
+        nock.cleanAll();
+    }, 60000);
+
+    it("Should set App value and return same App key values", async () => {
+        nock("https://test.com")
+            .defaultReplyHeaders({ "www-authenticate": "Digest realm=Example" })
+            .get("/cgi-set-app-key-Z1234567=Zappi123")
+            .reply(200, keyValueSetResponse);
+
+        nock("https://test.com")
+            .defaultReplyHeaders({ "www-authenticate": "Digest realm=Example" })
+            .get("/cgi-get-app-key-Z1234567")
+            .reply(200, keyValueSetResponse);
+
+        const query = new MyEnergi("test", "pwd", "https://test.com");
+
+        const res = await query.setAppKey("Z1234567", "Zappi123");
+        const response: AppKeyValues = Object.assign<AppKeyValues, unknown>({} as AppKeyValues, keyValueSetResponse);
+        const testResponse: KeyValue[] = response[Object.keys(response)[0]];
+        expect(res).toMatchObject(testResponse);
+        expect(testResponse[0].val).toMatch("Zappi123");
+        nock.cleanAll();
+    }, 60000);
+
+
 });

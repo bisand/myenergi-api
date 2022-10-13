@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Digest } from "./Digest";
+import { AppKeyValues } from './models/AppKeyValues';
 import { Eddi } from "./models/Eddi";
 import { Harvi } from "./models/Harvi";
+import { KeyValue } from './models/KeyValue';
 import { EddiBoost, EddiMode, ZappiBoostMode, ZappiChargeMode } from "./models/Types";
 import { Zappi } from "./models/Zappi";
 
@@ -19,6 +21,8 @@ export class MyEnergi {
         zappi_min_green_url: "/cgi-set-min-green-Z",
         eddi_mode_url: "/cgi-eddi-mode-E",
         eddi_boost_url: "/cgi-eddi-boost-E",
+        get_app_key_url: "/cgi-get-app-key",
+        set_app_key_url: "/cgi-set-app-key",
         //https://s18.myenergi.net/cgi-jdayhour-Znnnnnnnn-YYYY-MM-DD
     };
 
@@ -181,5 +185,35 @@ export class MyEnergi {
         } catch (error) {
             return null;
         }
+    }
+
+    public async getAppKey(key: string): Promise<KeyValue[] | null> {
+        try {
+            const data = await this._digest.get(new URL(`${this._config.get_app_key_url}-${key}`, this._config.base_url));
+            const jsonData = JSON.parse(data);
+            if (jsonData) {
+                const result = Object.assign<AppKeyValues, unknown>({} as AppKeyValues, jsonData);
+                if (result[Object.keys(result)[0]])
+                    return result[Object.keys(result)[0]];
+            }
+        } catch (error) {
+            return null;
+        }
+        return null;
+    }
+
+    public async setAppKey(key: string, val: string): Promise<KeyValue[] | null> {
+        try {
+            const data = await this._digest.get(new URL(`${this._config.set_app_key_url}-${key}=${val}`, this._config.base_url));
+            const jsonData = JSON.parse(data);
+            if (jsonData) {
+                const result = Object.assign<AppKeyValues, unknown>({} as AppKeyValues, jsonData);
+                if (result[Object.keys(result)[0]])
+                    return result[Object.keys(result)[0]];
+            }
+        } catch (error) {
+            return null;
+        }
+        return null;
     }
 }
