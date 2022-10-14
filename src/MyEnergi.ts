@@ -193,8 +193,7 @@ export class MyEnergi {
             const jsonData = JSON.parse(data);
             if (jsonData) {
                 const result = Object.assign<AppKeyValues, unknown>({} as AppKeyValues, jsonData);
-                if (result)
-                    return result;
+                return result;
             }
         } catch (error) {
             return null;
