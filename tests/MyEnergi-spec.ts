@@ -56,11 +56,11 @@ describe("MyEnergi Tests", () => {
     };
 
     const keyValueResponse = {
-        H12345678: [{ key: "Z1234567", val: "Zappi" }]
+        "H12345678": [{ key: "Z1234567", val: "Zappi" }]
     }
 
     const keyValueSetResponse = {
-        H12345678: [{ key: "Z1234567", val: "Zappi123" }]
+        "H12345678": [{ key: "Z1234567", val: "Zappi123" }]
     }
 
     it("should be able to test", () => {
@@ -138,7 +138,7 @@ describe("MyEnergi Tests", () => {
         nock.cleanAll();
     }, 60000);
 
-    it("Should return valid App key values", async () => {
+    it("Should return valid app key values", async () => {
         nock("https://test.com")
             .defaultReplyHeaders({ "www-authenticate": "Digest realm=Example" })
             .get("/cgi-get-app-key-Z1234567")
@@ -150,6 +150,20 @@ describe("MyEnergi Tests", () => {
         const response: AppKeyValues = Object.assign<AppKeyValues, unknown>({} as AppKeyValues, keyValueResponse);
         const testResponse: KeyValue[] = response[Object.keys(response)[0]];
         expect(res).toMatchObject(testResponse);
+        nock.cleanAll();
+    }, 60000);
+
+    it("Should return valid full app key values", async () => {
+        nock("https://test.com")
+            .defaultReplyHeaders({ "www-authenticate": "Digest realm=Example" })
+            .get("/cgi-get-app-key-Z1234567")
+            .reply(200, keyValueResponse);
+
+        const query = new MyEnergi("test", "pwd", "https://test.com");
+
+        const res = await query.getAppKeyFull("Z1234567");
+        const response: AppKeyValues = Object.assign<AppKeyValues, unknown>({} as AppKeyValues, keyValueResponse);
+        expect(res).toMatchObject(response);
         nock.cleanAll();
     }, 60000);
 

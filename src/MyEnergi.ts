@@ -187,6 +187,21 @@ export class MyEnergi {
         }
     }
 
+    public async getAppKeyFull(key: string): Promise<AppKeyValues | null> {
+        try {
+            const data = await this._digest.get(new URL(`${this._config.get_app_key_url}-${key}`, this._config.base_url));
+            const jsonData = JSON.parse(data);
+            if (jsonData) {
+                const result = Object.assign<AppKeyValues, unknown>({} as AppKeyValues, jsonData);
+                if (result)
+                    return result;
+            }
+        } catch (error) {
+            return null;
+        }
+        return null;
+    }
+
     public async getAppKey(key: string): Promise<KeyValue[] | null> {
         try {
             const data = await this._digest.get(new URL(`${this._config.get_app_key_url}-${key}`, this._config.base_url));
