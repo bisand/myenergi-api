@@ -8,6 +8,7 @@ export class Digest {
     private _baseUrl: URL;
     private _maxRedirectCount: number;
     private _maxRetryCount: number;
+    private _etags: { [key: string]: string } = {};
 
     constructor(baseUrl: string, username: string, password: string) {
         this._maxRedirectCount = 3
@@ -23,9 +24,13 @@ export class Digest {
             let resData = "";
             if (!options.headers) options.headers = {};
             options.headers.Authorization = this._authDigest?.getAuthorization(options.method as string, options.path as string);
+            const etag = this._etags[options.path as string];
+            if (etag) options.headers["If-None-Match"] = etag;
+
             const req = https.request(options, (res: IncomingMessage) => {
                 if (res.statusCode == 401) {
                     // myenergi asn redirect handler.
+                    this._etags[options.path as string] = res.headers.etag as string;
                     const myenergiAsn = res.headers["x_myenergi-asn"] as string;
                     if (myenergiAsn && myenergiAsn !== "undefined" && myenergiAsn !== this._baseUrl.host) {
                         if (redirectCount > this._maxRedirectCount) {
@@ -95,6 +100,10 @@ export class Digest {
                         resolve(resData);
                     });
                 } else if (res.statusCode && res.statusCode >= 300 && res.statusCode < 400) {
+                    if (res.statusCode == 304) {
+                        resolve("{}");
+                        return;
+                    }
                     if (redirectCount > this._maxRedirectCount) {
                         reject(`Too many redirects: ${res.headers["location"]}`);
                         return;
