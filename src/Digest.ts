@@ -122,14 +122,12 @@ export class Digest {
                             reject(resaon);
                         });
                 } else {
-                    console.error("status code failed!!");
-                    reject("status code failed!!");
+                     reject("status code failed!!");
                     return;
                 }
             });
 
             req.on("error", (e: Error) => {
-                console.error(`problem with request: ${e.message}`);
                 reject(e);
             });
 
