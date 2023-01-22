@@ -10,10 +10,12 @@ export enum EddiBoost {
 }
 
 export enum EddiHeaterStatus {
-    Paused = 1,
+    Starting = 0,
+    Paused = 1, // Waiting for export
+    DSR = 2, // Demand Side Response
     Diverting = 3,
     Boost = 4,
-    MaxTempReached = 5,
+    Hot = 5,
     Stopped = 6,
 }
 
