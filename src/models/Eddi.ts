@@ -8,8 +8,10 @@ export interface Eddi {
     dst: number; // Daylight Savings Time enabled
     ectp1: number; // physical CT connection 1 value
     ectp2: number; // physical CT connection 2 value
+    ectp3: number; // physical CT connection 3 value
     ectt1: string; // CT 1 name
     ectt2: string; // CT 2 name
+    ectt3: string; // CT 3 name
     frq: number; // Supply Frequency
     fwv: number; // firmware version
     gen: number; // Generated Watts
