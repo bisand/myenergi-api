@@ -19,6 +19,7 @@ export class MyEnergi {
         dayhour_url: "/cgi-jdayhour-",
         zappi_mode_url: "/cgi-zappi-mode-Z",
         zappi_min_green_url: "/cgi-set-min-green-Z",
+        zappi_boost_time_url: "/cgi-boost-time-Z",
         eddi_mode_url: "/cgi-eddi-mode-E",
         eddi_boost_url: "/cgi-eddi-boost-E",
         get_app_key_url: "/cgi-get-app-key",
@@ -106,9 +107,38 @@ export class MyEnergi {
             const data = await this._digest.get(url);
             const jsonData = JSON.parse(data);
             return jsonData;
+        } catch (error) {            
+            return {};
+        }
+    }
+
+    public async getZappiBoostTimes(serialNo: string): Promise<any> {
+        try {
+            const url = new URL(`${this._config.zappi_boost_time_url}${serialNo}`, this._config.base_url);
+            const data = await this._digest.get(url);
+            const jsonData = JSON.parse(data);
+            return jsonData;
         } catch (error) {
             return {};
         }
+    }
+
+    public async setZappiBoostTime(
+        serialNo: string, 
+        slot: number, 
+        startHour: number, 
+        startMinute: number, 
+        durationHour: number, 
+        durationMinute: number,
+        daySpec: string): Promise<any> {
+        try {
+            const url = new URL(`${this._config.zappi_boost_time_url}${serialNo}-${slot}-${startHour.toString().padStart(2, '0')}${startMinute.toString().padStart(2, '0')}-${durationHour}${durationMinute.toString().padStart(2, '0')}-${daySpec}`, this._config.base_url);
+            const data = await this._digest.get(url);
+            const jsonData = JSON.parse(data);
+            return jsonData;
+        } catch (error) {
+            return {};
+        }    
     }
 
     public async getStatusEddiAll(): Promise<Eddi[]> {

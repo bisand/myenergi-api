@@ -83,6 +83,28 @@ In ECO and ECO+ you can use the boosts to top up your battery quickly.  There ar
 const result = await myenergi.setZappiBoostMode(sno, ZappiBoostMode.Smart, 22, '0615');
 console.log(result);
 ```
+### Get Zappi boost times
+Gets the boost charge times schedule. Returns the times as list of 4 available slots.
+```typescript
+const result = await myenergi.getZappiBoostTimes(sno);
+console.log(result);
+```
+### Set Zappi boost time
+Sets the boost time schedule. 
+
+The arguments are:
+1. Serial number of zappi device
+2. The slot number (obtained by calling getZappiBoostTimes and likely to be 11-14)
+3. Start hour (0-23)
+4. Start minutes (must be 0, 15, 30 or 45)
+5. Duration hours (0-9)
+6. Duration minutes (must be 0, 15, 30 or 45)
+7. Day enablements (always starts with zero and the following seven digits are Monday-Sunday))
+
+```typescript
+const result = await myenergi.setZappiBoostTime(sno, 11, 23, 45, 2, 30, '01111111');
+console.log(result);
+```
 
 ### Get status for all Harvi devices
 Return status of all Harvi devices connected to the hub.
