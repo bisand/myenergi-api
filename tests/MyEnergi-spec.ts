@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { MyEnergi } from "../src/MyEnergi";
-import { LibbiMode, ZappiPhaseSetting } from "../src/models/Types";
+import { EddiBoost, LibbiMode, ZappiPhaseSetting } from "../src/models/Types";
 import nock from "nock";
 import { Zappi } from "../src/models/Zappi";
 import { AppKeyValues } from '../src/models/AppKeyValues';
@@ -219,6 +219,32 @@ describe("MyEnergi Tests", () => {
         const query = new MyEnergi("test", "pwd", "https://test.com");
 
         const res = await query.setZappiPhaseSetting("12345678", ZappiPhaseSetting.Auto);
+        expect(res).toMatchObject({ status: 0, statustext: "" });
+        nock.cleanAll();
+    }, 60000);
+
+    it("Should start Eddi manual boost on heater 2", async () => {
+        nock("https://test.com")
+            .defaultReplyHeaders({ "www-authenticate": "Digest realm=Example" })
+            .get("/cgi-eddi-boost-E12345678-10-2-60")
+            .reply(200, { status: 0, statustext: "" });
+
+        const query = new MyEnergi("test", "pwd", "https://test.com");
+
+        const res = await query.setEddiBoost("12345678", EddiBoost.ManualHeater2, 60);
+        expect(res).toMatchObject({ status: 0, statustext: "" });
+        nock.cleanAll();
+    }, 60000);
+
+    it("Should cancel Eddi boost on heater 2", async () => {
+        nock("https://test.com")
+            .defaultReplyHeaders({ "www-authenticate": "Digest realm=Example" })
+            .get("/cgi-eddi-boost-E12345678-1-2-0")
+            .reply(200, { status: 0, statustext: "" });
+
+        const query = new MyEnergi("test", "pwd", "https://test.com");
+
+        const res = await query.setEddiBoost("12345678", EddiBoost.CancelHeater2);
         expect(res).toMatchObject({ status: 0, statustext: "" });
         nock.cleanAll();
     }, 60000);
