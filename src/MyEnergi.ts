@@ -4,7 +4,7 @@ import { AppKeyValues } from './models/AppKeyValues';
 import { Eddi } from "./models/Eddi";
 import { Harvi } from "./models/Harvi";
 import { KeyValue } from './models/KeyValue';
-import { EddiBoost, EddiMode, ZappiBoostMode, ZappiChargeMode } from "./models/Types";
+import { EddiBoost, EddiMode, ZappiBoostMode, ZappiChargeMode, ZappiPhaseSetting } from "./models/Types";
 import { Zappi } from "./models/Zappi";
 
 export class MyEnergi {
@@ -19,6 +19,7 @@ export class MyEnergi {
         dayhour_url: "/cgi-jdayhour-",
         zappi_mode_url: "/cgi-zappi-mode-Z",
         zappi_min_green_url: "/cgi-set-min-green-Z",
+        zappi_phase_setting_url: "/cgi-zappi-phase-setting-Z",
         zappi_boost_time_url: "/cgi-boost-time-Z",
         eddi_mode_url: "/cgi-eddi-mode-E",
         eddi_boost_url: "/cgi-eddi-boost-E",
@@ -108,6 +109,21 @@ export class MyEnergi {
             const jsonData = JSON.parse(data);
             return jsonData;
         } catch (error) {            
+            return {};
+        }
+    }
+
+    /**
+     * Set the phase setting on a Zappi. Requires firmware with phase
+     * switching support (three phase Zappi V2.1 and later).
+     */
+    public async setZappiPhaseSetting(serialNo: string, phaseSetting: ZappiPhaseSetting): Promise<any> {
+        try {
+            const url = new URL(`${this._config.zappi_phase_setting_url}${serialNo}-${phaseSetting}`, this._config.base_url);
+            const data = await this._digest.get(url);
+            const jsonData = JSON.parse(data);
+            return jsonData;
+        } catch (error) {
             return {};
         }
     }

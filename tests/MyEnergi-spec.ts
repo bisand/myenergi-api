@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { MyEnergi } from "../src/MyEnergi";
+import { ZappiPhaseSetting } from "../src/models/Types";
 import nock from "nock";
 import { Zappi } from "../src/models/Zappi";
 import { AppKeyValues } from '../src/models/AppKeyValues';
@@ -185,6 +186,19 @@ describe("MyEnergi Tests", () => {
         const testResponse: KeyValue[] = response[Object.keys(response)[0]];
         expect(res).toMatchObject(testResponse);
         expect(testResponse[0].val).toMatch("Zappi123");
+        nock.cleanAll();
+    }, 60000);
+
+    it("Should set Zappi phase setting", async () => {
+        nock("https://test.com")
+            .defaultReplyHeaders({ "www-authenticate": "Digest realm=Example" })
+            .get("/cgi-zappi-phase-setting-Z12345678-2")
+            .reply(200, { status: 0, statustext: "" });
+
+        const query = new MyEnergi("test", "pwd", "https://test.com");
+
+        const res = await query.setZappiPhaseSetting("12345678", ZappiPhaseSetting.Auto);
+        expect(res).toMatchObject({ status: 0, statustext: "" });
         nock.cleanAll();
     }, 60000);
 

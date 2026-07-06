@@ -57,3 +57,18 @@ export enum ZappiStatus {
     Charging = "C2",
     Fault = "F",
 }
+
+export enum ZappiPhaseSetting {
+    /**
+     * Charge using a single phase.
+     */
+    SinglePhase = 0,
+    /**
+     * Charge using all three phases.
+     */
+    ThreePhase = 1,
+    /**
+     * Let the Zappi switch between single and three phase automatically.
+     */
+    Auto = 2,
+}
