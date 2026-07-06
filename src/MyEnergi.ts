@@ -4,8 +4,9 @@ import { AppKeyValues } from './models/AppKeyValues';
 import { Eddi } from "./models/Eddi";
 import { Harvi } from "./models/Harvi";
 import { HistoryRecord } from './models/HistoryRecord';
+import { Libbi } from "./models/Libbi";
 import { KeyValue } from './models/KeyValue';
-import { EddiBoost, EddiMode, ZappiBoostMode, ZappiChargeMode, ZappiPhaseSetting } from "./models/Types";
+import { EddiBoost, EddiMode, LibbiMode, ZappiBoostMode, ZappiChargeMode, ZappiPhaseSetting } from "./models/Types";
 import { Zappi } from "./models/Zappi";
 
 export class MyEnergi {
@@ -16,6 +17,8 @@ export class MyEnergi {
         eddi_url: "/cgi-jstatus-E",
         zappi_url: "/cgi-jstatus-Z",
         harvi_url: "/cgi-jstatus-H",
+        libbi_url: "/cgi-jstatus-L",
+        libbi_mode_url: "/cgi-libbi-mode-L",
         status_url: "/cgi-jstatus-*",
         dayhour_url: "/cgi-jdayhour-",
         zappi_mode_url: "/cgi-zappi-mode-Z",
@@ -159,6 +162,48 @@ export class MyEnergi {
             return Array.isArray(records) ? records as HistoryRecord[] : [];
         } catch (error) {
             return [];
+        }
+    }
+
+    public async getStatusLibbiAll(): Promise<Libbi[]> {
+        try {
+            const data = await this._digest.get(new URL(this._config.libbi_url, this._config.base_url)) as string;
+            const jsonData = JSON.parse(data);
+            if (jsonData.libbi) return Object.assign<Libbi[], unknown>([] as Libbi[], jsonData.libbi);
+            else return [] as Libbi[];
+        } catch (error) {
+            return [] as Libbi[];
+        }
+    }
+
+    public async getStatusLibbi(serialNumber: string): Promise<Libbi | null> {
+        try {
+            const data = await this._digest.get(new URL(this._config.libbi_url, this._config.base_url)) as string;
+            const jsonData = JSON.parse(data);
+            if (jsonData.libbi) {
+                const libbi = (Object.assign<Libbi[], unknown>([] as Libbi[], jsonData.libbi) as Libbi[]).find((libbi) => {
+                    return libbi.sno == serialNumber;
+                });
+                if (libbi) return Object.assign<Libbi, unknown>({} as Libbi, libbi);
+                else return null;
+            } else return null;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    /**
+     * Set the Libbi operating mode. Only Stop, Normal (BALANCE) and
+     * Export (DRAIN) can be set through this API.
+     */
+    public async setLibbiMode(serialNo: string, mode: LibbiMode): Promise<any> {
+        try {
+            const url = new URL(`${this._config.libbi_mode_url}${serialNo}-${mode}`, this._config.base_url);
+            const data = await this._digest.get(url);
+            const jsonData = JSON.parse(data);
+            return jsonData;
+        } catch (error) {
+            return {};
         }
     }
 
