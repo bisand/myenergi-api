@@ -3,6 +3,7 @@ import { Digest } from "./Digest";
 import { AppKeyValues } from './models/AppKeyValues';
 import { Eddi } from "./models/Eddi";
 import { Harvi } from "./models/Harvi";
+import { HistoryRecord } from './models/HistoryRecord';
 import { KeyValue } from './models/KeyValue';
 import { EddiBoost, EddiMode, ZappiBoostMode, ZappiChargeMode, ZappiPhaseSetting } from "./models/Types";
 import { Zappi } from "./models/Zappi";
@@ -125,6 +126,39 @@ export class MyEnergi {
             return jsonData;
         } catch (error) {
             return {};
+        }
+    }
+
+    /**
+     * Retrieve historic energy data hour by hour for a device via
+     * cgi-jdayhour. All energy values in the returned records are in
+     * joules (watt seconds).
+     *
+     * @param id Device ID code: prefix letter plus serial number,
+     *           e.g. "Z12345678" for a Zappi or "E12345678" for an Eddi.
+     * @param year Year (four digits, UTC)
+     * @param month Month (1-12, UTC)
+     * @param day Day of month (UTC)
+     * @param startHour Optional starting hour (0-23, UTC)
+     * @param noHours Optional number of hours to report (default 24, max 744)
+     */
+    public async getDayHourHistory(id: string, year: number, month: number, day: number, startHour?: number, noHours?: number): Promise<HistoryRecord[]> {
+        try {
+            let path = `${this._config.dayhour_url}${id}-${year}-${month}-${day}`;
+            if (startHour !== undefined) {
+                path += `-${startHour}`;
+                if (noHours !== undefined) {
+                    path += `-${noHours}`;
+                }
+            }
+            const url = new URL(path, this._config.base_url);
+            const data = await this._digest.get(url);
+            const jsonData = JSON.parse(data);
+            const key = Object.keys(jsonData)[0];
+            const records = key ? jsonData[key] : undefined;
+            return Array.isArray(records) ? records as HistoryRecord[] : [];
+        } catch (error) {
+            return [];
         }
     }
 

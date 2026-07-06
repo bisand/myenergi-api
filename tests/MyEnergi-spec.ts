@@ -189,6 +189,27 @@ describe("MyEnergi Tests", () => {
         nock.cleanAll();
     }, 60000);
 
+    it("Should return day hour history records", async () => {
+        const historyResponse = {
+            "U12345678": [
+                { hr: 6, dow: "Mon", dom: 31, mon: 7, yr: 2023, imp: 3600000, h1d: 1800000 },
+                { hr: 7, dow: "Mon", dom: 31, mon: 7, yr: 2023, imp: 7200000, h1d: 3600000, h1b: 900000 },
+            ],
+        };
+        nock("https://test.com")
+            .defaultReplyHeaders({ "www-authenticate": "Digest realm=Example" })
+            .get("/cgi-jdayhour-Z12345678-2023-7-31-6-2")
+            .reply(200, historyResponse);
+
+        const query = new MyEnergi("test", "pwd", "https://test.com");
+
+        const res = await query.getDayHourHistory("Z12345678", 2023, 7, 31, 6, 2);
+        expect(res).toHaveLength(2);
+        expect(res[0].h1d).toBe(1800000);
+        expect(res[1].h1b).toBe(900000);
+        nock.cleanAll();
+    }, 60000);
+
     it("Should set Zappi phase setting", async () => {
         nock("https://test.com")
             .defaultReplyHeaders({ "www-authenticate": "Digest realm=Example" })
