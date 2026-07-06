@@ -27,7 +27,7 @@ export interface Eddi {
     rbt: number; // If boosting, the remaining boost time in of seconds
     sta: number; // Status 1=Paused, 3=Diverting, 4=Boost, 5=Max Temp Reached, 6=Stopped
     tim: string; // time
-    tp: number; // temperature probe 1 (50 C)
+    tp1: number; // temperature probe 1 (50 C)
     tp2: number; // temperature probe 2
     vol: number; // Voltage out (divide by 10)
 }
