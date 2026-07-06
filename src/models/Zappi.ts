@@ -399,4 +399,13 @@ export interface Zappi {
     rrac: number;
     zs: number;
     zsl: number;
+
+    /**
+     * Phase setting reported by newer Zappi firmware.
+     * "1" = single phase, "3" = three phase, "auto" = automatic switching.
+     * Not present on older firmware versions.
+     *
+     * @type {string}
+     */
+    phaseSetting?: string;
 }
