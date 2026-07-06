@@ -1,10 +1,10 @@
 export enum EddiBoost {
     CancelHeater1 = "1-1",
-    CancelHeater2 = "1-1",
+    CancelHeater2 = "1-2",
     CancelRelay1 = "1-11",
     CancelRelay2 = "1-12",
     ManualHeater1 = "10-1",
-    ManualHeater2 = "10-1",
+    ManualHeater2 = "10-2",
     ManualRelay1 = "10-11",
     ManualRelay2 = "10-12",
 }
