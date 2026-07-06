@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { MyEnergi } from "../src/MyEnergi";
-import { ZappiPhaseSetting } from "../src/models/Types";
+import { LibbiMode, ZappiPhaseSetting } from "../src/models/Types";
 import nock from "nock";
 import { Zappi } from "../src/models/Zappi";
 import { AppKeyValues } from '../src/models/AppKeyValues';
@@ -219,6 +219,37 @@ describe("MyEnergi Tests", () => {
         const query = new MyEnergi("test", "pwd", "https://test.com");
 
         const res = await query.setZappiPhaseSetting("12345678", ZappiPhaseSetting.Auto);
+        expect(res).toMatchObject({ status: 0, statustext: "" });
+        nock.cleanAll();
+    }, 60000);
+
+    it("Should return a valid Libbi device", async () => {
+        const libbiResponse = {
+            libbi: [
+                { sno: 21234567, dat: "01-07-2026", tim: "12:00:00", soc: 72, gen: 3200, grd: -150, sta: 5, lmo: "BALANCE", mbc: 10200, mic: 5000, frq: 50.01, vol: 2331, pri: 1, cmt: 254 },
+            ],
+        };
+        nock("https://test.com")
+            .defaultReplyHeaders({ "www-authenticate": "Digest realm=Example" })
+            .get("/cgi-jstatus-L")
+            .reply(200, libbiResponse);
+        const query = new MyEnergi("test", "pwd", "https://test.com");
+
+        const res = await query.getStatusLibbi("21234567");
+        expect(res?.soc).toBe(72);
+        expect(res?.gen).toBe(3200);
+        nock.cleanAll();
+    }, 60000);
+
+    it("Should set Libbi mode", async () => {
+        nock("https://test.com")
+            .defaultReplyHeaders({ "www-authenticate": "Digest realm=Example" })
+            .get("/cgi-libbi-mode-L21234567-1")
+            .reply(200, { status: 0, statustext: "" });
+
+        const query = new MyEnergi("test", "pwd", "https://test.com");
+
+        const res = await query.setLibbiMode("21234567", LibbiMode.Normal);
         expect(res).toMatchObject({ status: 0, statustext: "" });
         nock.cleanAll();
     }, 60000);

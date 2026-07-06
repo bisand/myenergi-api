@@ -72,3 +72,20 @@ export enum ZappiPhaseSetting {
      */
     Auto = 2,
 }
+
+export enum LibbiMode {
+    /**
+     * Stop the Libbi.
+     */
+    Stop = 0,
+    /**
+     * Normal operation (BALANCE) - charge from surplus, discharge to match load.
+     */
+    Normal = 1,
+    /**
+     * Export mode (DRAIN) - discharge the battery to the grid.
+     * Note: the myenergi app defines additional modes (capture, charge,
+     * match) but these cannot be set through this API.
+     */
+    Export = 5,
+}
