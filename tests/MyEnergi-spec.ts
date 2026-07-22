@@ -280,5 +280,18 @@ describe("MyEnergi Tests", () => {
         nock.cleanAll();
     }, 60000);
 
+    it("Should unlock Zappi", async () => {
+        nock("https://test.com")
+            .defaultReplyHeaders({ "www-authenticate": "Digest realm=Example" })
+            .get("/cgi-jlock-16000001-00000010")
+            .reply(200, { status: 0, statustext: "" });
+
+        const query = new MyEnergi("test", "pwd", "https://test.com");
+
+        const res = await query.unlockZappi("16000001");
+        expect(res).toMatchObject({ status: 0, statustext: "" });
+        nock.cleanAll();
+    }, 60000);
+
 
 });

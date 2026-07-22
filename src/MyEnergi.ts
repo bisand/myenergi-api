@@ -25,6 +25,7 @@ export class MyEnergi {
         zappi_min_green_url: "/cgi-set-min-green-Z",
         zappi_phase_setting_url: "/cgi-zappi-phase-setting-Z",
         zappi_boost_time_url: "/cgi-boost-time-Z",
+        zappi_lock_url: "/cgi-jlock-",
         eddi_mode_url: "/cgi-eddi-mode-E",
         eddi_boost_url: "/cgi-eddi-boost-E",
         get_app_key_url: "/cgi-get-app-key",
@@ -124,6 +125,25 @@ export class MyEnergi {
     public async setZappiPhaseSetting(serialNo: string, phaseSetting: ZappiPhaseSetting): Promise<any> {
         try {
             const url = new URL(`${this._config.zappi_phase_setting_url}${serialNo}-${phaseSetting}`, this._config.base_url);
+            const data = await this._digest.get(url);
+            const jsonData = JSON.parse(data);
+            return jsonData;
+        } catch (error) {
+            return {};
+        }
+    }
+
+    /**
+     * Unlock a Zappi so a charge session is allowed. Sends the jlock
+     * command with the "Charge Session Allowed" flag (00000010), the
+     * same call the myenergi app uses to unlock a locked charger.
+     * Note: unlike the other Zappi commands, jlock takes the serial
+     * number without the Z prefix. The current lock state is readable
+     * from the lck bit field in the Zappi status (bit 0 = locked now).
+     */
+    public async unlockZappi(serialNo: string): Promise<any> {
+        try {
+            const url = new URL(`${this._config.zappi_lock_url}${serialNo}-00000010`, this._config.base_url);
             const data = await this._digest.get(url);
             const jsonData = JSON.parse(data);
             return jsonData;
