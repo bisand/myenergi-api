@@ -134,6 +134,22 @@ console.log(result);
 ```
 
 
+### Libbi charge from grid (myenergi account)
+Charge from grid is not available through the hub serial and API key. It uses the myenergi account API, which needs the email and password of your myenergi account. Unlike `MyEnergi`, the methods of `MyEnergiAccount` throw a `MyEnergiAccountError` when a request fails.
+
+The Libbi only charges from the grid up to its charge target, and only during the cheap periods of the tariff configured in the myenergi app.
+```typescript
+const account = new MyEnergiAccount("me@example.com", "!3uper3ecretPassw0rd");
+const sno = '1234567';
+
+const enabled: boolean = await account.getLibbiChargeFromGrid(sno);
+await account.setLibbiChargeFromGrid(sno, true);
+
+// Charge target in Wh
+const setup: LibbiChargeSetup = await account.getLibbiChargeSetup(sno);
+await account.setLibbiChargeTarget(sno, 4600);
+```
+
 ## From myenergi documentation
 <a name="myenergi_documentation"></a>
 <a name="charge_mode"></a>
