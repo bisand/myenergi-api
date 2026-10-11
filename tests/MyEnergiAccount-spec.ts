@@ -201,6 +201,23 @@ describe("MyEnergiAccount Tests", () => {
         expect(error).toBeInstanceOf(MyEnergiAccountError);
     });
 
+    it("Should replace and remove a Zappi single charge by name", async () => {
+        mockLogin();
+        const single = (id: string, name: string, kWh: number) => ({ id, scheduleType: "Single", scheduleNickName: name, chargingOutputName: "veh1", chargeAmountMinutes: 0, fromTime: "01:00", toTime: "05:00", singleChargeDay: "08/27/2026", isActive: true, chargeAmountKWh: kWh });
+        const request = (name: string, kWh: number, day: string, id?: string) => ({ ...(id ? { id } : {}), scheduleNickName: name, vehicle, power: kWh, singleChargeDay: day, fromTime: "01:00", toTime: "05:00", chargeAmountMinutes: Math.round(kWh / 11 * 60), chargingOutputName: "veh1", scheduleType: "Single", chargeAmountKWh: kWh });
+        nock(accountUrl)
+            .get("/api/ChargeSchedules/GetAllSchedules").times(2).reply(200, ok([{ hubId: "hub1", devices: [{ deviceId: "dev1", singleCharges: [single("sc1", "Manual", 4), single("sc2", "Homey", 6)] }] }]))
+            .get("/api/Vehicle/UserVehicles").times(2).reply(200, ok([vehicle]))
+            .post("/api/ChargeSchedules/SaveSchedules", { chargeSchedules: [request("Manual", 4, "27-08-2026", "sc1"), request("Homey", 11, "28-08-2026")], deviceId: "dev1", isActive: true, scheduleType: "Single" })
+            .reply(200, ok({ chargeSchedules: [] }))
+            .post("/api/ChargeSchedules/SaveSchedules", { chargeSchedules: [request("Manual", 4, "27-08-2026", "sc1")], deviceId: "dev1", isActive: true, scheduleType: "Single" })
+            .reply(200, ok({ chargeSchedules: [] }));
+
+        const client = account();
+        await client.setZappiSingleCharge("dev1", { name: "Homey", vehicleId: "veh1", kWh: 11, date: "28-08-2026", fromTime: "01:00", toTime: "05:00" });
+        await client.removeZappiSingleCharges("dev1", "Homey");
+    });
+
     it("Should clear Zappi single charges", async () => {
         mockLogin();
         nock(accountUrl)
