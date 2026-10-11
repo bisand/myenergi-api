@@ -185,6 +185,7 @@ await account.addZappiSingleCharge(zappi.id, {
 
 await account.clearZappiSingleCharges(zappi.id);
 ```
+`setZappiSingleCharge` takes the same arguments but replaces the single charges that have the same name, and `removeZappiSingleCharges(id, name)` removes only those. Both leave single charges with other names alone, which suits an automation that should own one entry.
 The API only replaces the complete list of a schedule type; `saveChargeSchedules` gives direct access to that call.
 
 ## From myenergi documentation

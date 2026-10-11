@@ -206,21 +206,50 @@ export class MyEnergiAccount {
      * @param deviceId Account id of the Zappi (see getDevice)
      */
     public async addZappiSingleCharge(deviceId: string, charge: ZappiSingleCharge): Promise<unknown> {
+        return this.updateZappiSingleCharges(deviceId, () => true, charge);
+    }
+
+    /**
+     * Set a single charge on a Zappi, replacing the single charges that have
+     * the same name and keeping all others. Use a fixed name to own one
+     * entry without piling up a new one on every call.
+     * @param deviceId Account id of the Zappi (see getDevice)
+     */
+    public async setZappiSingleCharge(deviceId: string, charge: ZappiSingleCharge): Promise<unknown> {
+        return this.updateZappiSingleCharges(deviceId, (c) => c.scheduleNickName !== charge.name, charge);
+    }
+
+    /**
+     * Remove the single charges with the given name from a Zappi, keeping
+     * all others.
+     * @param deviceId Account id of the Zappi (see getDevice)
+     */
+    public async removeZappiSingleCharges(deviceId: string, name: string): Promise<unknown> {
+        return this.updateZappiSingleCharges(deviceId, (c) => c.scheduleNickName !== name);
+    }
+
+    /**
+     * Re-send the single charges of a Zappi that pass the keep filter,
+     * optionally with one added. The API only replaces the complete list.
+     */
+    private async updateZappiSingleCharges(deviceId: string, keep: (charge: ChargeSchedule) => boolean, add?: ZappiSingleCharge): Promise<unknown> {
         const [device, vehicles] = await Promise.all([this.getDeviceChargeSchedules(deviceId), this.getVehicles()]);
         if (!device)
             throw new MyEnergiAccountError("The device does not support charge schedules.");
-        const existing = (device.singleCharges || []).map((c) => this.toSingleChargeRequest(c, vehicles));
-        const added = this.toSingleChargeRequest({
-            scheduleType: "Single",
-            scheduleNickName: charge.name,
-            chargingOutputName: charge.vehicleId,
-            chargeAmountMinutes: 0,
-            chargeAmountKWh: charge.kWh,
-            fromTime: charge.fromTime,
-            toTime: charge.toTime,
-            singleChargeDay: typeof charge.date === "string" ? charge.date : this.formatDay(charge.date),
-        }, vehicles);
-        return this.saveChargeSchedules(deviceId, "Single", [...existing, added]);
+        const charges = (device.singleCharges || []).filter(keep).map((c) => this.toSingleChargeRequest(c, vehicles));
+        if (add) {
+            charges.push(this.toSingleChargeRequest({
+                scheduleType: "Single",
+                scheduleNickName: add.name,
+                chargingOutputName: add.vehicleId,
+                chargeAmountMinutes: 0,
+                chargeAmountKWh: add.kWh,
+                fromTime: add.fromTime,
+                toTime: add.toTime,
+                singleChargeDay: typeof add.date === "string" ? add.date : this.formatDay(add.date),
+            }, vehicles));
+        }
+        return this.saveChargeSchedules(deviceId, "Single", charges);
     }
 
     /**
