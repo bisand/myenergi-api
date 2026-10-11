@@ -150,6 +150,43 @@ const setup: LibbiChargeSetup = await account.getLibbiChargeSetup(sno);
 await account.setLibbiChargeTarget(sno, 4600);
 ```
 
+### Other myenergi account functions
+`MyEnergiAccount` also covers the rest of the known account API. Hubs and devices are identified by their account id here, not by serial number.
+```typescript
+const hubs = await account.getHubs();                     // includes serial number and API key per hub
+const hubId = hubs[0].hubId;
+const zappi = await account.getDevice('1234567');         // look up a device's account id by serial number
+const locations = await account.getLocations();           // sites, with address and energy setup
+const vehicles = await account.getVehicles();             // vehicle profiles
+const schedules = await account.getChargeSchedules();     // all charge schedules, per hub and device
+const history = await account.getHubHourlyHistory(hubId, new Date());
+const tariff = await account.getDualTariff(hubId);
+await account.saveDualTariff(tariff);                     // overwrites the tariff set in the myenergi app
+```
+`saveDualTariff` has not been verified against the live API.
+
+For a location you were invited to as a guest, set `account.invitationId` to the `invitationData.invitationId` of that location.
+
+### Zappi single charge (myenergi account)
+A single charge is a one-off, date-specific charge: myenergi picks the cheapest times in the window from the tariff on the account. It is not the same as a smart boost. A Zappi that does not support schedules is not listed by `getChargeSchedules`.
+```typescript
+const zappi = await account.getDevice('1234567');
+const vehicles = await account.getVehicles();
+
+// Adds to the single charges the Zappi already has
+await account.addZappiSingleCharge(zappi.id, {
+    name: 'Homey',
+    vehicleId: vehicles[0].id,
+    kWh: 10,
+    date: new Date(2026, 9, 12),
+    fromTime: '22:00',
+    toTime: '07:00',
+});
+
+await account.clearZappiSingleCharges(zappi.id);
+```
+The API only replaces the complete list of a schedule type; `saveChargeSchedules` gives direct access to that call.
+
 ## From myenergi documentation
 <a name="myenergi_documentation"></a>
 <a name="charge_mode"></a>
