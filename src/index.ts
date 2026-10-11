@@ -1,3 +1,4 @@
+import { AccountDevice, AccountHub, AccountHubsAndDevices, AccountLocation, AccountVehicle, ChargeSchedule, DeviceChargeSchedules, DualTariff, HubChargeSchedules, TariffBand, ZappiSingleCharge } from "./models/Account";
 import { Eddi } from "./models/Eddi";
 import { Harvi } from "./models/Harvi";
 import { HistoryRecord } from "./models/HistoryRecord";
@@ -7,4 +8,4 @@ import { EddiBoost, EddiHeaterStatus, EddiMode, LibbiMode, ZappiBoostMode, Zappi
 import { Zappi } from "./models/Zappi";
 import { MyEnergi } from "./MyEnergi";
 import { MyEnergiAccount, MyEnergiAccountError } from "./MyEnergiAccount";
-export { MyEnergi, MyEnergiAccount, MyEnergiAccountError, Eddi, Zappi, Harvi, Libbi, LibbiChargeSetup, HistoryRecord, EddiBoost, EddiMode, EddiHeaterStatus, LibbiMode, ZappiBoostMode, ZappiChargeMode, ZappiPhaseSetting, ZappiStatus };
+export { MyEnergi, MyEnergiAccount, MyEnergiAccountError, Eddi, Zappi, Harvi, Libbi, LibbiChargeSetup, AccountDevice, AccountHub, AccountHubsAndDevices, AccountLocation, AccountVehicle, ChargeSchedule, DeviceChargeSchedules, DualTariff, HubChargeSchedules, TariffBand, ZappiSingleCharge, HistoryRecord, EddiBoost, EddiMode, EddiHeaterStatus, LibbiMode, ZappiBoostMode, ZappiChargeMode, ZappiPhaseSetting, ZappiStatus };
